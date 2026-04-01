@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ДОНУЛЯ — Партнёрская программа</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--a:#00E676;--a-dim:rgba(0,230,118,0.10);--a-glow:rgba(0,230,118,0.25);--bg:#070B08;--card:rgba(17,25,22,0.7);--card-solid:#111916;--t:#EFF5F1;--t2:#7E9487;--bd:rgba(0,230,118,0.08);--r:16px;--nav:56px;--foot:96px}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--t);font-family:'Manrope',sans-serif;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:var(--a);text-decoration:none}
+
+/* Nav */
+.nav{position:fixed;top:0;left:0;right:0;height:var(--nav);z-index:100;background:rgba(7,11,8,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);padding:0 20px;display:flex;align-items:center;justify-content:space-between}
+.logo img{height:30px}
+.nav-badge{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--t2);background:var(--card-solid);padding:4px 10px;border-radius:6px;border:1px solid var(--bd)}
+
+/* Wizard */
+#wizard{position:fixed;top:var(--nav);left:0;right:0;bottom:var(--foot);overflow:hidden}
+
+/* Screens */
+.screen{position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:auto;-webkit-overflow-scrolling:touch;transform:translateX(100%);transition:transform .42s cubic-bezier(.4,0,.2,1)}
+.screen-inner{max-width:540px;margin:0 auto;padding:28px 20px 24px}
+.screen.active{transform:translateX(0)}
+.screen.prev{transform:translateX(-100%)}
+
+/* Bottom nav */
+#bottomNav{position:fixed;bottom:0;left:0;right:0;background:rgba(7,11,8,0.95);backdrop-filter:blur(20px);border-top:1px solid var(--bd);padding:10px 20px 16px;z-index:100;display:flex;flex-direction:column;align-items:center;gap:10px}
+.dots{display:flex;gap:8px;align-items:center}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(0,230,118,0.2);transition:all .3s}
+.dot.active{background:var(--a);width:20px;border-radius:4px;box-shadow:0 0 8px var(--a-glow)}
+#nav-row{position:relative;width:100%;max-width:540px;display:flex;align-items:center}
+#nextBtn{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:14px;border-radius:14px;border:none;background:var(--a);color:#070B08;font-family:'Manrope',sans-serif;font-weight:800;font-size:16px;cursor:pointer;transition:all .2s}
+#nextBtn:hover{transform:translateY(-1px);box-shadow:0 4px 20px var(--a-glow)}
+#nextBtn:active{transform:scale(.97)}
+#backBtn{display:flex;align-items:center;justify-content:center;width:48px;height:48px;border-radius:12px;border:1px solid var(--bd);background:transparent;color:var(--t2);font-size:18px;cursor:pointer;transition:all .2s;flex-shrink:0;margin-right:10px}
+#backBtn:hover{color:var(--t);border-color:var(--a)}
+#backBtn.hidden{display:none}
+#nextBtn.hidden{display:none}
+
+/* Badge */
+.badge{display:inline-block;padding:5px 14px;border-radius:100px;background:var(--a-dim);color:var(--a);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--bd);margin-bottom:16px}
+
+/* Headings */
+h1{font-weight:900;font-size:clamp(30px,7vw,48px);line-height:1.08;letter-spacing:-.03em}
+h2{font-weight:800;font-size:clamp(22px,5vw,32px);line-height:1.15;letter-spacing:-.02em;margin-bottom:8px}
+.subtitle{font-size:15px;color:var(--t2);line-height:1.6;margin-top:6px}
+
+/* Glass card */
+.glass{background:var(--card);backdrop-filter:blur(16px);border:1px solid var(--bd);border-radius:var(--r);padding:24px 20px;position:relative;overflow:hidden}
+.glass::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,230,118,0.15),transparent)}
+
+/* Hero */
+.hero-visual{width:clamp(160px,45vw,260px);height:clamp(160px,45vw,260px);margin:0 auto 24px;position:relative}
+.hero-visual video,.hero-visual img{width:100%;height:100%;object-fit:cover;border-radius:50%;filter:drop-shadow(0 0 50px rgba(0,230,118,0.3))}
+.hero-visual::after{content:'';position:absolute;inset:-20px;border-radius:50%;background:radial-gradient(circle,rgba(0,230,118,0.06) 0%,transparent 70%);pointer-events:none;animation:hero-glow 4s ease-in-out infinite alternate}
+@keyframes hero-glow{0%{box-shadow:0 0 40px rgba(0,230,118,0.1)}100%{box-shadow:0 0 80px rgba(0,230,118,0.25)}}
+h1 span{color:var(--a)}
+.hero-desc{font-size:16px;color:var(--t2);line-height:1.6;margin-top:14px}
+
+/* Stats */
+.stats{display:flex;gap:1px;background:var(--bd);border-radius:var(--r);overflow:hidden;margin-top:24px}
+.stat{flex:1;background:var(--card-solid);padding:18px 10px;text-align:center}
+.stat-val{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:clamp(18px,3vw,26px);color:var(--a)}
+.stat-label{font-size:11px;color:var(--t2);margin-top:3px;font-weight:500}
+
+/* Live feed */
+.feed{overflow:hidden;border-radius:12px;background:var(--card-solid);border:1px solid var(--bd);padding:12px 0;margin-top:20px}
+.feed-track{display:flex;gap:20px;animation:scroll-feed 20s linear infinite;white-space:nowrap;padding:0 20px}
+.feed-item{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.feed-dot{width:8px;height:8px;border-radius:50%;background:var(--a);animation:pulse-dot 2s infinite}
+.feed-name{font-size:13px;font-weight:600;color:var(--t)}
+.feed-amount{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--a)}
+@keyframes scroll-feed{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* Calculator */
+.calc-result{text-align:center;background:rgba(0,230,118,0.04);border-radius:var(--r);padding:24px 20px;border:1px solid var(--bd);margin-top:20px}
+.calc-amount{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:clamp(32px,6vw,48px);color:var(--a);letter-spacing:-.02em}
+input[type=range]{width:100%;height:6px;border-radius:3px;-webkit-appearance:none;appearance:none;cursor:pointer;outline:none;background:#1a2420}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--a);cursor:pointer;border:3px solid var(--bg);box-shadow:0 0 10px var(--a-glow)}
+
+/* Comparison */
+.compare{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:20px}
+.compare-col{text-align:center;padding:20px 10px;border-radius:var(--r)}
+.compare-refs{font-size:12px;color:var(--t2);margin-bottom:6px;font-family:'JetBrains Mono',monospace}
+.compare-val{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:clamp(17px,3vw,22px);color:var(--a)}
+.compare-period{font-size:11px;color:var(--t2);margin-top:4px}
+.compare-col.highlight{border:1px solid var(--a)!important;background:rgba(0,230,118,0.04)}
+
+/* Auth */
+.auth-title{font-size:clamp(22px,5vw,32px);font-weight:900;text-align:center;margin-bottom:10px;line-height:1.2}
+.auth-sub{text-align:center;font-size:14px;color:var(--t2);line-height:1.6;margin-bottom:28px}
+.auth-offer{font-size:13px;color:var(--t);font-weight:600;text-align:center;margin-bottom:16px;line-height:1.5;background:rgba(0,230,118,0.06);border:1px solid var(--bd);border-radius:12px;padding:12px 16px}
+.auth-offer span{color:var(--a);font-family:'JetBrains Mono',monospace}
+.auth-btns{display:flex;flex-direction:column;gap:10px}
+.auth-btn{display:flex;align-items:center;justify-content:center;gap:10px;padding:16px;border-radius:14px;border:none;color:#fff;font-family:'Manrope',sans-serif;font-weight:700;font-size:16px;cursor:pointer;transition:all .2s;text-decoration:none;width:100%}
+.auth-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,.4)}
+.auth-btn:active{transform:scale(.98)}
+.auth-btn.tg{background:#0088CC}
+.auth-btn.vk{background:#0077FF}
+.auth-btn.max{background:linear-gradient(135deg,#3B82F6,#7C3AED,#C026D3)}
+.auth-hint{text-align:center;font-size:12px;color:var(--t2);margin-top:16px;line-height:1.5}
+
+/* Bank payment slider */
+.bank-slider-wrap{overflow:hidden;margin:16px -20px 0}
+.bank-slider{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding:4px 20px 12px;scrollbar-width:none}
+.bank-slider::-webkit-scrollbar{display:none}
+.bank-slide{flex:0 0 200px;scroll-snap-align:center;position:relative;border-radius:18px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.bank-slide img{width:100%;display:block;border-radius:18px}
+.bank-slide-label{position:absolute;bottom:0;left:0;right:0;padding:10px 12px;background:linear-gradient(transparent,rgba(0,0,0,.7));color:#fff;font-weight:800;font-size:15px;font-family:'Manrope',sans-serif;border-radius:0 0 18px 18px}
+.bank-slide-bank{font-size:11px;font-weight:500;opacity:.8;margin-bottom:2px}
+.bank-slider-hint{text-align:center;font-size:12px;color:var(--t2);margin-top:2px}
+
+/* Welcome video */
+.welcome-video-wrap{position:relative;width:100%;max-width:360px;margin:0 auto 16px;border-radius:20px;overflow:hidden;box-shadow:0 0 40px rgba(0,230,118,0.2)}
+.welcome-video{width:100%;display:block;border-radius:20px}
+/* Recommend image animation */
+.recommend-img{animation:recommendFloat 3s ease-in-out infinite}
+@keyframes recommendFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-6px) scale(1.02)}}
+
+/* Training progress */
+#mainDots{display:flex}
+#trainProgress{display:none;width:100%;max-width:540px}
+.train-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.train-label{font-size:11px;color:var(--t2);font-family:'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase}
+#trainStep{font-size:11px;color:var(--a);font-family:'JetBrains Mono',monospace;font-weight:600}
+.train-track{height:3px;background:rgba(0,230,118,0.15);border-radius:2px}
+#trainBar{height:100%;background:var(--a);border-radius:2px;transition:width .35s ease;width:9%}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="nav">
+  <div class="logo"><img src="./images/v2/logo-w.svg" alt="ДОНУЛЯ"></div>
+  <span class="nav-badge">Партнёрская программа</span>
+</nav>
+
+<!-- Wizard -->
+<div id="wizard">
+
+  <!-- Экран 1: Герой -->
+  <div class="screen active" id="s1"><div class="screen-inner">
+    <div style="text-align:center">
+      <div class="hero-visual">
+        <video id="heroVid" autoplay loop muted playsinline webkit-playsinline preload="auto" poster="./images/v2/hero_3d.jpg">
+          <source src="./images/v2/hero_safari.mp4" type="video/mp4">
+          <img src="./images/v2/hero_3d.jpg" alt="hero">
+        </video>
+      </div>
+      <span class="badge">Партнёрская программа</span>
+      <h1>Рекомендуй нас —<br><span>получи 10 000 ₽</span></h1>
+      <p class="hero-desc">За каждого человека, который заключит договор по вашей рекомендации. Без ограничений по количеству.</p>
+    </div>
+
+    <div class="feed" style="margin-top:24px">
+      <div class="feed-track">
+        <div class="feed-item"><span class="feed-dot"></span><span class="feed-name">Анна М.</span><span class="feed-amount">+10 000 ₽</span></div>
+        <div class="feed-item"><span class="feed-dot"></span><span class="feed-name">Сергей К.</span><span class="feed-amount">+30 000 ₽</span></div>
+        <div class="feed-item"><span class="feed-dot"></span><span class="feed-name">Ольга В.</span><span class="feed-amount">+10 000 ₽</span></div>
+        <div class="feed-item"><span class="feed-dot"></span><span class="feed-name">Дмитрий П.</span><span class="feed-amount">+20 000 ₽</span></div>
+        <div class="feed-item"><span class="feed-dot"></span><span class="feed-name">Елена С.</span><span class="feed-amount">+50 000 ₽</span></div>
+        <div class="feed-item"><span class="feed-dot"></span><span class="feed-name">Игорь Н.</span><span class="feed-amount">+10 000 ₽</span></div>
+        <div class="feed-item"><span class="feed-dot"></span><span class="feed-name">Анна М.</span><span class="feed-amount">+10 000 ₽</span></div>
+        <div class="feed-item"><span class="feed-dot"></span><span class="feed-name">Сергей К.</span><span class="feed-amount">+30 000 ₽</span></div>
+        <div class="feed-item"><span class="feed-dot"></span><span class="feed-name">Ольга В.</span><span class="feed-amount">+10 000 ₽</span></div>
+        <div class="feed-item"><span class="feed-dot"></span><span class="feed-name">Дмитрий П.</span><span class="feed-amount">+20 000 ₽</span></div>
+        <div class="feed-item"><span class="feed-dot"></span><span class="feed-name">Елена С.</span><span class="feed-amount">+50 000 ₽</span></div>
+        <div class="feed-item"><span class="feed-dot"></span><span class="feed-name">Игорь Н.</span><span class="feed-amount">+10 000 ₽</span></div>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-val" id="statCount">0</div><div class="stat-label">Партнёров</div></div>
+      <div class="stat"><div class="stat-val">10 000 ₽</div><div class="stat-label">За рекомендацию</div></div>
+      <div class="stat"><div class="stat-val">∞</div><div class="stat-label">Ограничений</div></div>
+    </div>
+  </div></div>
+
+  <!-- Экран 2: Калькулятор -->
+  <div class="screen" id="s2"><div class="screen-inner">
+    <span class="badge">Калькулятор дохода</span>
+    <h2>Посчитайте, сколько заработаете</h2>
+    <p class="subtitle">Двигайте ползунок — результат обновится мгновенно</p>
+
+    <div class="glass" style="margin-top:24px;padding:24px 20px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+        <span style="font-size:13px;color:var(--t2)">Рекомендаций в месяц</span>
+        <span id="refCount" style="font-family:'JetBrains Mono',monospace;font-weight:600;font-size:17px;color:var(--a)">4</span>
+      </div>
+      <input type="range" min="1" max="20" value="4" id="calcSlider"/>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t2);margin-top:5px"><span>1</span><span>20</span></div>
+      <div class="calc-result">
+        <div style="font-size:12px;color:var(--t2);font-weight:500;margin-bottom:4px">Ваш доход за месяц</div>
+        <div class="calc-amount" id="calcAmount">40 000 ₽</div>
+        <div style="font-size:12px;color:var(--t2);margin-top:6px" id="calcFormula">4 × 10 000 ₽</div>
+        <div id="calcEmoji" style="margin-top:12px;padding:8px 14px;border-radius:8px;background:rgba(0,230,118,0.06);font-size:13px;color:var(--a);font-weight:600;display:inline-block">👍 Хорошее начало</div>
+      </div>
+    </div>
+
+    <div class="glass" style="margin-top:12px;display:flex;gap:14px;align-items:center">
+      <div style="font-size:28px">💡</div>
+      <div style="font-size:14px;color:var(--t2);line-height:1.5">Достаточно <strong style="color:var(--t)">7 рекомендаций в месяц</strong>, чтобы зарабатывать больше средней зарплаты по России</div>
+    </div>
+  </div></div>
+
+  <!-- Экран 3: Потенциал -->
+  <div class="screen" id="s3"><div class="screen-inner">
+    <span class="badge">Потенциал</span>
+    <h2>Сколько можно заработать</h2>
+    <p class="subtitle">Без ограничений — чем больше рекомендаций, тем выше доход</p>
+
+    <div class="compare">
+      <div class="glass compare-col">
+        <div class="compare-refs">3 рекомендации</div>
+        <div class="compare-val">30 000 ₽</div>
+        <div class="compare-period">в месяц</div>
+      </div>
+      <div class="glass compare-col highlight">
+        <div class="compare-refs">7 рекомендаций</div>
+        <div class="compare-val">70 000 ₽</div>
+        <div class="compare-period">в месяц</div>
+      </div>
+      <div class="glass compare-col">
+        <div class="compare-refs">15 рекомендаций</div>
+        <div class="compare-val">150 000 ₽</div>
+        <div class="compare-period">в месяц</div>
+      </div>
+    </div>
+
+    <div class="glass" style="margin-top:16px;padding:20px">
+      <div style="font-size:13px;color:var(--t2);margin-bottom:12px;font-weight:600">Как работает схема</div>
+      <div style="display:flex;gap:12px;align-items:start;margin-bottom:10px">
+        <div style="width:24px;height:24px;border-radius:7px;background:var(--a-dim);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12px;color:var(--a);flex-shrink:0">1</div>
+        <div style="font-size:14px;line-height:1.5">Вы рекомендуете знакомому бесплатную консультацию</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:start;margin-bottom:10px">
+        <div style="width:24px;height:24px;border-radius:7px;background:var(--a-dim);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12px;color:var(--a);flex-shrink:0">2</div>
+        <div style="font-size:14px;line-height:1.5">Наш юрист проводит консультацию — вы ни в чём не участвуете</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:start">
+        <div style="width:24px;height:24px;border-radius:7px;background:var(--a-dim);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12px;color:var(--a);flex-shrink:0">3</div>
+        <div style="font-size:14px;line-height:1.5">Человек заключает договор → <strong style="color:var(--a)">вам 10 000 ₽</strong></div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:12px;background:rgba(0,230,118,0.04);border:1px solid var(--bd)">
+      <div style="font-size:22px">🏆</div>
+      <div style="font-size:15px;color:var(--t2);line-height:1.5">Уже <strong style="color:var(--t)">1 200+ партнёров</strong> зарабатывают с ДОНУЛЯ. Первая выплата — гарантирована.</div>
+    </div>
+  </div></div>
+
+  <!-- Экран 4: Авторизация -->
+  <div class="screen" id="s4" data-no-btn="true"><div class="screen-inner">
+    <div style="text-align:center;margin-bottom:8px">
+      <div style="font-size:48px;margin-bottom:16px">🚀</div>
+      <span class="badge">Начать</span>
+    </div>
+    <div class="auth-title">Выберите мессенджер<br>для регистрации</div>
+    <div class="auth-sub">Вы попадёте в ваш партнёрский чат, пройдёте короткое обучение и сразу начнёте зарабатывать</div>
+
+    <div class="auth-offer">
+      Передайте первый номер в мессенджер — получите гарантированные <span>500 ₽</span> независимо от результата
+    </div>
+
+    <div class="auth-btns">
+      <a href="#" onclick="nextScreen();return false;" class="auth-btn tg">
+        <img src="./images/v2/tg-logo.png" alt="" style="width:28px;height:28px;border-radius:6px">
+        Telegram
+      </a>
+      <a href="#" onclick="nextScreen();return false;" class="auth-btn vk">
+        <img src="./images/v2/vk-logo.png" alt="" style="width:28px;height:28px;border-radius:6px">
+        Вконтакте
+      </a>
+      <a href="#" onclick="nextScreen();return false;" class="auth-btn max">
+        <img src="./images/v2/max-logo.png" alt="" style="width:28px;height:28px;border-radius:6px">
+        MAX
+      </a>
+    </div>
+
+    <div class="auth-hint">Регистрация займёт 30 секунд.<br>Ссылку на обучение пришлём сразу.</div>
+  </div></div>
+
+  <!-- Экран 5: Добро пожаловать в обучение -->
+  <div class="screen" id="s5" data-btn="Приступить!"><div class="screen-inner">
+    <div style="text-align:center;padding:20px 0">
+      <div class="welcome-video-wrap">
+        <video muted loop playsinline class="welcome-video"></video>
+      </div>
+      <h2>Добро пожаловать<br>в партнёрскую программу<br>ДОНУЛЯ!</h2>
+      <p class="subtitle" style="margin-top:12px">После прохождения короткого обучения вам станут доступны вознаграждения за каждую рекомендацию!</p>
+      <div style="margin:20px auto 0;font-size:42px;font-weight:900;color:var(--a);font-family:'JetBrains Mono',monospace;letter-spacing:-1px">10 000 ₽</div>
+      <div style="font-size:13px;color:var(--t2);margin-top:4px">за каждого человека</div>
+    </div>
+    <div style="margin-top:16px;padding:16px 20px;border-radius:16px;background:linear-gradient(135deg,rgba(0,230,118,0.12),rgba(0,230,118,0.04));border:1px solid rgba(0,230,118,0.25);text-align:center">
+      <div style="font-size:28px;margin-bottom:6px">🎁</div>
+      <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px">Бонус за первую рекомендацию</div>
+      <div style="font-size:32px;font-weight:900;color:var(--a);font-family:'JetBrains Mono',monospace">500 ₽</div>
+      <div style="font-size:12px;color:var(--t2);margin-top:4px">независимо от результата</div>
+    </div>
+  </div></div>
+
+  <!-- Экран 6: Выплата — слайдер реальных фото -->
+  <div class="screen" id="s6" data-btn="Круто! 🔥"><div class="screen-inner">
+    <span class="badge">Шаг 1 из 10</span>
+    <h2>Так выглядит ваша выплата</h2>
+    <p class="subtitle">Реальные выплаты нашим партнёрам — каждый раз, когда рекомендация заключает договор</p>
+
+    <div class="bank-slider-wrap">
+      <div class="bank-slider" id="bankSlider">
+        <div class="bank-slide">
+          <img src="./images/v2/bank-sber-10k.webp" alt="+10 000 ₽ Сбербанк" loading="lazy">
+          <div class="bank-slide-label">
+            <div class="bank-slide-bank">Сбербанк</div>
+            +10 000 ₽
+          </div>
+        </div>
+        <div class="bank-slide">
+          <img src="./images/v2/bank-tbank-30k.webp" alt="+30 000 ₽ Т-Банк" loading="lazy">
+          <div class="bank-slide-label">
+            <div class="bank-slide-bank">Т-Банк</div>
+            +30 000 ₽
+          </div>
+        </div>
+        <div class="bank-slide">
+          <img src="./images/v2/bank-sber-50k.webp" alt="+50 000 ₽ Сбербанк" loading="lazy">
+          <div class="bank-slide-label">
+            <div class="bank-slide-bank">Сбербанк</div>
+            +50 000 ₽
+          </div>
+        </div>
+        <div class="bank-slide">
+          <img src="./images/v2/bank-vtb-20k.webp" alt="+20 000 ₽ ВТБ" loading="lazy">
+          <div class="bank-slide-label">
+            <div class="bank-slide-bank">ВТБ</div>
+            +20 000 ₽
+          </div>
+        </div>
+      </div>
+      <div class="bank-slider-hint">← пролистай →</div>
+    </div>
+  </div></div>
+
+  <!-- Экран 7: Кому рекомендовать -->
+  <div class="screen" id="s7" data-btn="Запомнил(а)!"><div class="screen-inner">
+    <span class="badge">Шаг 2 из 10</span>
+    <h2>😎 Кому нас рекомендовать?</h2>
+    <div class="glass" style="margin-top:16px;padding:20px">
+      <p style="font-size:17px;line-height:1.6;margin-bottom:14px">Всем, у кого сумма долга от <strong style="color:var(--a)">250 тысяч рублей</strong> по:</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:10px;align-items:center;font-size:16px;color:var(--t2)"><span style="color:var(--a);font-weight:700">—</span> кредитам, кредиткам, микрозаймам</div>
+        <div style="display:flex;gap:10px;align-items:center;font-size:16px;color:var(--t2)"><span style="color:var(--a);font-weight:700">—</span> налогам, штрафам, ЖКХ</div>
+      </div>
+    </div>
+    <div class="glass" style="margin-top:12px;padding:16px 20px;display:flex;align-items:center;gap:12px">
+      <span style="font-size:22px">✅</span>
+      <div style="font-size:16px;line-height:1.5;color:var(--t2)">Ваши родные, близкие, знакомые, знакомые знакомых и просто люди из интернета</div>
+    </div>
+    <img src="./images/v2/recommend-who.webp" alt="" class="recommend-img" style="width:100%;max-width:360px;display:block;margin:16px auto 0;border-radius:16px" loading="lazy">
+  </div></div>
+
+  <!-- Экран 8: Как находить рекомендации -->
+  <div class="screen" id="s8" data-btn="Классные идеи!"><div class="screen-inner">
+    <span class="badge">Шаг 3 из 10</span>
+    <h2>Как находить рекомендации?</h2>
+    <p class="subtitle">Вариантов реально много</p>
+    <div class="glass" style="margin-top:16px;padding:20px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;gap:12px;align-items:start"><span style="color:var(--a);font-size:18px;flex-shrink:0">•</span><div style="font-size:16px;line-height:1.6;color:var(--t2)">Рассказать друзьям, что вы партнёр компании по списанию долгов</div></div>
+      <div style="display:flex;gap:12px;align-items:start"><span style="color:var(--a);font-size:18px;flex-shrink:0">•</span><div style="font-size:16px;line-height:1.6;color:var(--t2)">Спросить у окружения, нужна ли им или их знакомым помощь</div></div>
+      <div style="display:flex;gap:12px;align-items:start"><span style="color:var(--a);font-size:18px;flex-shrink:0">•</span><div style="font-size:16px;line-height:1.6;color:var(--t2)">Разместить посты в своих соцсетях (макеты уже подготовлены)</div></div>
+      <div style="display:flex;gap:12px;align-items:start"><span style="color:var(--a);font-size:18px;flex-shrink:0">•</span><div style="font-size:16px;line-height:1.6;color:var(--t2)">Поискать людей в группах о списании долгов</div></div>
+      <div style="display:flex;gap:12px;align-items:start"><span style="color:var(--a);font-size:18px;flex-shrink:0">•</span><div style="font-size:16px;line-height:1.6;color:var(--t2)">Предложить бесплатную консультацию в чатах и группах</div></div>
+      <div style="display:flex;gap:12px;align-items:start"><span style="color:var(--a);font-size:18px;flex-shrink:0">•</span><div style="font-size:16px;line-height:1.6;color:var(--t2)">Разместить реферальную ссылку в соцсетях (вышлем сразу после обучения)</div></div>
+    </div>
+  </div></div>
+
+  <!-- Экран 9: Как передать рекомендацию -->
+  <div class="screen" id="s9" data-btn="Понятно!"><div class="screen-inner">
+    <span class="badge">Шаг 4 из 10</span>
+    <h2>Как передать рекомендацию?</h2>
+    <p class="subtitle">И снова всё просто :)</p>
+    <div class="glass" style="margin-top:20px;padding:28px 20px;text-align:center">
+      <img src="./images/v2/send-contact.webp" alt="" class="recommend-img" style="width:120px;height:120px;border-radius:50%;object-fit:cover;margin:0 auto 16px;display:block">
+      <p style="font-size:17px;line-height:1.7;color:var(--t2)">Помните, в начале вы выбрали мессенджер?<br><br>Появилась рекомендация — отправьте <strong style="color:var(--t)">имя и номер человека</strong> в наш чат.<br>Остальная работа на нас!</p>
+    </div>
+  </div></div>
+
+  <!-- Экран 10: Что происходит после -->
+  <div class="screen" id="s10" data-btn="Хочу рекомендовать!"><div class="screen-inner">
+    <span class="badge">Шаг 5 из 10</span>
+    <h2>Что происходит после?</h2>
+    <p class="subtitle">Вы отправили контакт — дальше работаем мы</p>
+    <div style="display:flex;flex-direction:column;gap:14px;margin-top:20px">
+      <div class="glass" style="padding:20px">
+        <div style="display:flex;gap:14px;align-items:start">
+          <div style="font-size:32px;flex-shrink:0">📞</div>
+          <div>
+            <div style="font-size:17px;font-weight:700;margin-bottom:4px">Шаг 1 — Консультация</div>
+            <div style="font-size:15px;color:var(--t2);line-height:1.6">Наш юрист связывается с человеком и проводит бесплатную консультацию</div>
+          </div>
+        </div>
+      </div>
+      <div class="glass" style="padding:20px">
+        <div style="display:flex;gap:14px;align-items:start">
+          <div style="font-size:32px;flex-shrink:0">📝</div>
+          <div>
+            <div style="font-size:17px;font-weight:700;margin-bottom:4px">Шаг 2 — Договор</div>
+            <div style="font-size:15px;color:var(--t2);line-height:1.6">Если человеку подходит — он заключает договор с компанией</div>
+          </div>
+        </div>
+      </div>
+      <div class="glass" style="padding:20px">
+        <div style="display:flex;gap:14px;align-items:start">
+          <div style="font-size:32px;flex-shrink:0">🎉</div>
+          <div>
+            <div style="font-size:17px;font-weight:700;margin-bottom:4px">Шаг 3 — Вознаграждение</div>
+            <div style="font-size:15px;color:var(--t2);line-height:1.6">Мы оповещаем вас — <strong style="color:var(--a)">+10 000 ₽</strong> на ваш счёт!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- Экран 11: Как получить вознаграждение -->
+  <div class="screen" id="s11" data-btn="Супер!"><div class="screen-inner">
+    <span class="badge">Шаг 6 из 10</span>
+    <h2>💸 Как получить вознаграждение?</h2>
+    <p class="subtitle">Два варианта — выбирайте удобный</p>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-top:20px">
+      <div class="glass" style="padding:20px">
+        <div style="display:flex;gap:14px;align-items:start">
+          <div style="font-size:32px;flex-shrink:0">📋</div>
+          <div>
+            <div style="font-size:17px;font-weight:700;margin-bottom:6px">Если есть платежи по договору</div>
+            <div style="font-size:15px;color:var(--t2);line-height:1.6">10 000 ₽ вычитаются из грядущего платежа по договору — вы просто платите меньше</div>
+          </div>
+        </div>
+      </div>
+      <div class="glass" style="padding:20px">
+        <div style="display:flex;gap:14px;align-items:start">
+          <div style="font-size:32px;flex-shrink:0">💳</div>
+          <div>
+            <div style="font-size:17px;font-weight:700;margin-bottom:6px">Если договор выплачен</div>
+            <div style="font-size:15px;color:var(--t2);line-height:1.6">Сертификат Ozon / Wildberries или перевод на вашу карту*</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:16px;padding:14px 20px;border-radius:14px;background:rgba(0,230,118,0.06);border:1px solid var(--bd);text-align:center">
+      <div style="font-size:13px;color:var(--t2)">*перевод возможен только на вашу карту</div>
+      <div style="font-size:28px;font-weight:900;color:var(--a);font-family:'JetBrains Mono',monospace;margin-top:8px">= 10 000 ₽</div>
+      <div style="font-size:13px;color:var(--t2);margin-top:4px">за каждый заключённый договор</div>
+    </div>
+  </div></div>
+
+  <!-- Экран 12: FAQ -->
+  <div class="screen" id="s12" data-btn="Всё понятно!"><div class="screen-inner">
+    <span class="badge">Шаг 7 из 10</span>
+    <h2>Популярные вопросы</h2>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:20px">
+      <div class="glass" style="padding:18px 20px">
+        <div style="display:flex;gap:12px;align-items:start">
+          <div style="font-size:28px;flex-shrink:0">♾️</div>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:var(--a);margin-bottom:6px">Сколько вознаграждений в месяц?</div>
+            <div style="font-size:15px;color:var(--t2);line-height:1.6">Нет никаких ограничений — сколько человек заключит договор, столько вознаграждений и будет</div>
+          </div>
+        </div>
+      </div>
+      <div class="glass" style="padding:18px 20px">
+        <div style="display:flex;gap:12px;align-items:start">
+          <div style="font-size:28px;flex-shrink:0">🔗</div>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:var(--a);margin-bottom:6px">Что такое реферальная ссылка?</div>
+            <div style="font-size:15px;color:var(--t2);line-height:1.6">Ваша уникальная ссылка для соцсетей. Человек переходит, заключает договор — вы получаете 10 000 ₽</div>
+          </div>
+        </div>
+      </div>
+      <div class="glass" style="padding:18px 20px">
+        <div style="display:flex;gap:12px;align-items:start">
+          <div style="font-size:28px;flex-shrink:0">⚖️</div>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:var(--a);margin-bottom:6px">Нужно ли консультировать человека?</div>
+            <div style="font-size:15px;color:var(--t2);line-height:1.6">Нет — эту работу выполнят наши юристы. Ваша задача только передать контакт</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- Экран 13: Важный совет -->
+  <div class="screen" id="s13" data-btn="Запомню!"><div class="screen-inner">
+    <span class="badge">Шаг 8 из 10</span>
+    <h2>Важный совет</h2>
+    <img src="./images/v2/advice-tip.webp" alt="" class="recommend-img" style="width:140px;height:140px;border-radius:50%;object-fit:cover;margin:16px auto;display:block">
+    <div class="glass" style="margin-top:12px;padding:20px">
+      <p style="font-size:16px;line-height:1.7;color:var(--t2)">Когда вы рекомендуете компанию — <strong style="color:var(--t)">не старайтесь продавать банкротство</strong>, это лишь отпугнёт.<br><br>Доносите ценность <strong style="color:var(--a)">бесплатной консультации</strong> — человек узнает своё реальное финансовое положение, поймёт варианты и сколько есть времени до критической точки <span style="color:var(--t)">(это когда начинаются аресты карт, имущества, взыскания, коллекторы)</span>.</p>
+    </div>
+    <div class="glass" style="margin-top:12px;padding:14px 20px;display:flex;align-items:center;gap:12px">
+      <span style="font-size:22px">💡</span>
+      <div style="font-size:15px;color:var(--t2);line-height:1.5">Вспомните — вы тоже проходили бесплатную консультацию и именно после неё приняли решение работать с нами :)</div>
+    </div>
+  </div></div>
+
+  <!-- Экран 14: Итоги -->
+  <div class="screen" id="s14" data-btn="Завершить обучение →"><div class="screen-inner">
+    <span class="badge">Шаг 9 из 10</span>
+    <h2>Подведём итоги</h2>
+    <img src="./images/v2/summary-done.webp" alt="" class="recommend-img" style="width:100%;max-width:280px;display:block;margin:12px auto;border-radius:16px" loading="lazy">
+    <div class="glass" style="margin-top:12px;padding:20px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;gap:12px;align-items:start">
+        <span style="color:var(--a);font-size:20px;flex-shrink:0;line-height:1.4">✓</span>
+        <div style="font-size:16px;line-height:1.5">Рекомендовать можно всем с долгом от <strong style="color:var(--a)">250 тысяч рублей</strong></div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:start">
+        <span style="color:var(--a);font-size:20px;flex-shrink:0;line-height:1.4">✓</span>
+        <div style="font-size:16px;line-height:1.5">Чтобы передать рекомендацию — отправьте <strong style="color:var(--a)">номер и имя</strong> в ваш чат-партнёра</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:start">
+        <span style="color:var(--a);font-size:20px;flex-shrink:0;line-height:1.4">✓</span>
+        <div style="font-size:16px;line-height:1.5">Вознаграждение за каждый договор — <strong style="color:var(--a)">+10&nbsp;000&nbsp;₽</strong></div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- Экран 15: Поздравление -->
+  <div class="screen" id="s15" data-btn="Начать зарабатывать и перейти в группу"><div class="screen-inner">
+    <div style="text-align:center;padding:20px 0">
+      <div style="width:100%;max-width:360px;margin:0 auto 16px;border-radius:20px;overflow:hidden;box-shadow:0 0 40px rgba(0,230,118,0.2)">
+        <video muted loop playsinline class="congrats-video" style="width:100%;display:block;border-radius:20px"></video>
+      </div>
+      <h2>Поздравляем!<br>Теперь вы наш партнёр!</h2>
+      <p class="subtitle" style="margin-top:12px">Уже направили вам в чат стартовый пакет партнёра</p>
+    </div>
+    <div style="margin-top:16px;padding:16px 20px;border-radius:16px;background:linear-gradient(135deg,rgba(0,230,118,0.12),rgba(0,230,118,0.04));border:1px solid rgba(0,230,118,0.25);text-align:center">
+      <div style="font-size:28px;margin-bottom:6px">🎁</div>
+      <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px">Бонус за первую рекомендацию</div>
+      <div style="font-size:32px;font-weight:900;color:var(--a);font-family:'JetBrains Mono',monospace">500 ₽</div>
+      <div style="font-size:13px;color:var(--t2);margin-top:4px">гарантированно за первый номер</div>
+    </div>
+    <div class="glass" style="margin-top:10px;padding:14px 20px;display:flex;align-items:center;gap:12px">
+      <span style="font-size:22px">📲</span>
+      <div style="font-size:15px;color:var(--t2);line-height:1.5">Помогайте людям и зарабатывайте — полный вперёд!</div>
+    </div>
+  </div></div>
+
+</div>
+
+<!-- Bottom Nav -->
+<div id="bottomNav">
+  <div id="mainDots" class="dots">
+    <span class="dot active"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+    <span class="dot"></span>
+  </div>
+  <div id="trainProgress">
+    <div class="train-meta">
+      <span class="train-label">Обучение</span>
+      <span id="trainStep">1 / 11</span>
+    </div>
+    <div class="train-track"><div id="trainBar"></div></div>
+  </div>
+  <div id="nav-row">
+    <button id="backBtn" class="hidden" onclick="prevScreen()">←</button>
+    <button id="nextBtn" onclick="nextScreen()">Далее →</button>
+  </div>
+</div>
+
+<script>
+// Counter animation
+(function(){
+  const el = document.getElementById('statCount');
+  let start = null;
+  const target = 1200;
+  function step(ts) {
+    if (!start) start = ts;
+    const p = Math.min((ts - start) / 1500, 1);
+    el.textContent = Math.floor(p * target).toLocaleString('ru');
+    if (p < 1) requestAnimationFrame(step);
+    else el.textContent = '1 200+';
+  }
+  setTimeout(()=>requestAnimationFrame(step), 400);
+})();
+
+// Calculator
+const slider = document.getElementById('calcSlider');
+const emojis = ['','😐','😊','😊','👍','👍','🔥','🔥','🔥','🔥','🔥','💪','💪','💪','💰','💰','💰','🚀','🚀','🚀','🏆'];
+const labels = ['','Скромно','Неплохо','Неплохо','Хорошее начало','Хорошее начало','Отличный результат','Отличный результат','Отличный результат','Отличный результат','Отличный результат','Серьёзный доход','Серьёзный доход','Серьёзный доход','Топ партнёр','Топ партнёр','Топ партнёр','Легенда 🏆','Легенда 🏆','Легенда 🏆','Легенда 🏆'];
+function updateCalc(v){
+  document.getElementById('refCount').textContent = v;
+  const amt = v * 10000;
+  document.getElementById('calcAmount').textContent = amt.toLocaleString('ru') + ' ₽';
+  document.getElementById('calcFormula').textContent = v + ' × 10 000 ₽';
+  document.getElementById('calcEmoji').textContent = emojis[v] + ' ' + labels[v];
+}
+slider.addEventListener('input', ()=>updateCalc(+slider.value));
+
+// Screens
+let cur = 0;
+const screens = document.querySelectorAll('.screen');
+const dots = document.querySelectorAll('.dot');
+const nextBtn = document.getElementById('nextBtn');
+const backBtn = document.getElementById('backBtn');
+const TOTAL = screens.length;
+
+const TRAIN_START = 4; // индекс первого экрана обучения
+const TRAIN_TOTAL = 11;
+const mainDots = document.getElementById('mainDots');
+const trainProgress = document.getElementById('trainProgress');
+const trainStep = document.getElementById('trainStep');
+const trainBar = document.getElementById('trainBar');
+
+function goTo(n) {
+  if (n === cur) return;
+
+  screens.forEach((s, i) => {
+    s.classList.remove('active', 'prev');
+    if (i < n) s.classList.add('prev');
+  });
+  screens[n].classList.add('active');
+
+  // Навигация: точки или прогресс-бар обучения
+  if (n < TRAIN_START) {
+    mainDots.style.display = 'flex';
+    trainProgress.style.display = 'none';
+    dots.forEach((d, i) => d.classList.toggle('active', i === n));
+  } else {
+    mainDots.style.display = 'none';
+    trainProgress.style.display = 'block';
+    const step = n - TRAIN_START + 1;
+    trainStep.textContent = step + ' / ' + TRAIN_TOTAL;
+    trainBar.style.width = (step / TRAIN_TOTAL * 100) + '%';
+  }
+
+  backBtn.classList.toggle('hidden', n === 0);
+
+  // Кнопка «Далее»: скрыть если last screen или data-no-btn
+  const noBtn = screens[n].dataset.noBtn === 'true';
+  if (noBtn) {
+    nextBtn.classList.add('hidden');
+  } else {
+    nextBtn.classList.remove('hidden');
+    nextBtn.textContent = screens[n].dataset.btn || 'Далее →';
+  }
+
+  cur = n;
+  screens[n].scrollTop = 0;
+  // Спецэффекты по экрану
+  var wv = document.querySelector('.welcome-video');
+  if (wv) {
+    if (n === 4) {
+      if (!wv.src || wv.src === '') {
+        wv.src = './images/v2/team-welcome.mp4';
+        wv.load();
+      }
+      wv.play().catch(function(){});
+    } else { wv.pause(); }
+  }
+  var cv = document.querySelector('.congrats-video');
+  if (cv) {
+    if (n === TOTAL - 1) {
+      if (!cv.src || cv.src === '') {
+        cv.src = './images/v2/team-congrats.mp4';
+        cv.load();
+      }
+      cv.play().catch(function(){});
+    } else { cv.pause(); }
+  }
+}
+
+function nextScreen() { if (cur < TOTAL - 1) goTo(cur + 1); }
+function prevScreen() { if (cur > 0) goTo(cur - 1); }
+
+// Swipe support
+let touchX = null;
+document.getElementById('wizard').addEventListener('touchstart', e=>{touchX=e.touches[0].clientX}, {passive:true});
+document.getElementById('wizard').addEventListener('touchend', e=>{
+  if(touchX===null) return;
+  const dx = e.changedTouches[0].clientX - touchX;
+  if(Math.abs(dx) > 50) dx < 0 ? nextScreen() : prevScreen();
+  touchX = null;
+}, {passive:true});
+
+// Safari video fallback
+const vid = document.getElementById('heroVid');
+if(vid){
+  vid.play().catch(()=>{
+    vid.style.display='none';
+    document.querySelector('.hero-visual img') && (document.querySelector('.hero-visual img').style.display='block');
+  });
+}
+</script>
+</body>
+</html>
