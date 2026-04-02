@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ДОНУЛЯ — Бесплатная консультация по списанию долгов</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--a:#00E676;--a-dim:rgba(0,230,118,0.10);--a-glow:rgba(0,230,118,0.25);--bg:#070B08;--card:rgba(17,25,22,0.7);--card-solid:#111916;--t:#EFF5F1;--t2:#7E9487;--bd:rgba(0,230,118,0.08);--r:16px}
+html,body{min-height:100%;background:var(--bg);color:var(--t);font-family:'Manrope',sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--a);text-decoration:none}
+
+.wrap{max-width:540px;margin:0 auto;padding:20px 20px 40px}
+
+/* Nav */
+.nav{background:rgba(7,11,8,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);padding:14px 20px;display:flex;align-items:center;justify-content:center;position:sticky;top:0;z-index:10}
+.nav img{height:30px}
+
+/* Hero */
+.hero{text-align:center;padding:40px 0 20px}
+.hero h1{font-size:clamp(24px,5vw,32px);font-weight:800;line-height:1.25;margin-bottom:12px}
+.hero h1 span{color:var(--a)}
+.hero p{font-size:16px;color:var(--t2);line-height:1.6}
+
+/* Trust */
+.trust{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:24px 0}
+.trust-item{text-align:center;padding:16px 8px;border-radius:var(--r);background:var(--card);border:1px solid var(--bd)}
+.trust-icon{font-size:28px;margin-bottom:8px}
+.trust-val{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:18px;color:var(--a)}
+.trust-label{font-size:12px;color:var(--t2);margin-top:4px}
+
+/* Form */
+.form-card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:28px 20px;margin-top:8px}
+.form-card h2{font-size:20px;font-weight:700;margin-bottom:20px;text-align:center}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:13px;color:var(--t2);margin-bottom:6px;font-weight:500}
+.field input,.field select,.field textarea{width:100%;padding:14px 16px;border-radius:12px;border:1px solid var(--bd);background:rgba(0,0,0,0.3);color:var(--t);font-family:'Manrope',sans-serif;font-size:16px;outline:none;transition:border-color .2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--a)}
+.field input::placeholder,.field textarea::placeholder{color:var(--t2);opacity:0.6}
+.field select{-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237E9487' stroke-width='2' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center}
+.field select option{background:var(--card-solid);color:var(--t)}
+.field textarea{resize:vertical;min-height:80px}
+
+.submit-btn{width:100%;padding:16px;border:none;border-radius:14px;background:var(--a);color:#070B08;font-family:'Manrope',sans-serif;font-size:17px;font-weight:700;cursor:pointer;transition:opacity .2s;margin-top:4px}
+.submit-btn:active{opacity:0.85}
+.submit-btn:disabled{opacity:0.5;cursor:not-allowed}
+
+.form-hint{text-align:center;font-size:11px;color:var(--t2);margin-top:12px;line-height:1.5}
+
+/* Thank you */
+.thank-you{display:none;text-align:center;padding:40px 20px}
+.thank-you .icon{font-size:64px;margin-bottom:16px}
+.thank-you h2{font-size:24px;font-weight:800;margin-bottom:12px}
+.thank-you p{font-size:16px;color:var(--t2);line-height:1.6}
+
+/* Badge */
+.badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--a);background:var(--a-dim);border:1px solid var(--bd);border-radius:20px;padding:5px 14px;letter-spacing:1px;text-transform:uppercase}
+
+/* Bottom info */
+.bottom-info{margin-top:32px;padding:20px;border-radius:var(--r);background:linear-gradient(135deg,rgba(0,230,118,0.08),rgba(0,230,118,0.02));border:1px solid var(--bd);text-align:center}
+.bottom-info p{font-size:14px;color:var(--t2);line-height:1.6}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <img src="./images/v2/logo-w.svg" alt="ДОНУЛЯ">
+</div>
+
+<div class="wrap">
+
+  <!-- Hero -->
+  <div class="hero">
+    <span class="badge">Бесплатная консультация</span>
+    <h1 style="margin-top:16px">Узнайте, можно ли <span>законно списать</span> ваши долги</h1>
+    <p>Без обязательств. Юрист разберёт вашу ситуацию и расскажет о вариантах</p>
+  </div>
+
+  <!-- Trust -->
+  <div class="trust">
+    <div class="trust-item">
+      <div class="trust-icon">👥</div>
+      <div class="trust-val">1 200+</div>
+      <div class="trust-label">Клиентов</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">⚖️</div>
+      <div class="trust-val">100%</div>
+      <div class="trust-label">Законно</div>
+    </div>
+    <div class="trust-item">
+      <div class="trust-icon">💰</div>
+      <div class="trust-val">0 ₽</div>
+      <div class="trust-label">За консультацию</div>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div class="form-card" id="formCard">
+    <h2>Оставьте заявку</h2>
+    <form id="refForm" novalidate>
+      <div class="field">
+        <label for="name">Ваше имя</label>
+        <input type="text" id="name" placeholder="Как к вам обращаться?" required autocomplete="name"/>
+      </div>
+      <div class="field">
+        <label for="phone">Номер телефона</label>
+        <input type="tel" id="phone" placeholder="+7 (___) ___-__-__" required autocomplete="tel"/>
+      </div>
+      <div class="field">
+        <label for="debt">Сумма долга</label>
+        <select id="debt" required>
+          <option value="" disabled selected>Выберите диапазон</option>
+          <option value="250-500">250 — 500 тыс. ₽</option>
+          <option value="500-1000">500 тыс. — 1 млн. ₽</option>
+          <option value="1000-3000">1 — 3 млн. ₽</option>
+          <option value="3000+">Более 3 млн. ₽</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="comment">Комментарий <span style="color:var(--t2);font-weight:400">(необязательно)</span></label>
+        <textarea id="comment" placeholder="Опишите вашу ситуацию коротко..."></textarea>
+      </div>
+      <button type="submit" class="submit-btn">Получить бесплатную консультацию</button>
+    </form>
+    <div class="form-hint">Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности</div>
+  </div>
+
+  <!-- Thank you -->
+  <div class="thank-you" id="thankYou">
+    <div class="icon">✅</div>
+    <h2>Спасибо за заявку!</h2>
+    <p>Наш юрист свяжется с вами<br>в течение <strong style="color:var(--a)">30 минут</strong></p>
+    <div class="bottom-info" style="margin-top:24px">
+      <p>Подготовьте документы о задолженности — это ускорит консультацию</p>
+    </div>
+  </div>
+
+  <!-- Bottom -->
+  <div class="bottom-info" id="bottomInfo">
+    <p>Компания ДОНУЛЯ помогает законно списать долги по кредитам, микрозаймам, налогам и ЖКХ от <strong style="color:var(--a)">250 000 ₽</strong></p>
+  </div>
+
+</div>
+
+<script>
+// Referral code from URL
+var refCode = new URLSearchParams(window.location.search).get('ref') || '';
+
+// Phone mask
+var phoneInput = document.getElementById('phone');
+phoneInput.addEventListener('input', function() {
+  var v = this.value.replace(/\D/g, '');
+  if (v.length > 0 && v[0] === '8') v = '7' + v.slice(1);
+  if (v.length > 0 && v[0] !== '7') v = '7' + v;
+  var f = '';
+  if (v.length > 0) f = '+' + v[0];
+  if (v.length > 1) f += ' (' + v.substring(1, 4);
+  if (v.length >= 4) f += ') ';
+  if (v.length > 4) f += v.substring(4, 7);
+  if (v.length > 7) f += '-' + v.substring(7, 9);
+  if (v.length > 9) f += '-' + v.substring(9, 11);
+  this.value = f;
+});
+
+// Form submit
+document.getElementById('refForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  var name = document.getElementById('name').value.trim();
+  var phone = document.getElementById('phone').value.trim();
+  var debt = document.getElementById('debt').value;
+  var comment = document.getElementById('comment').value.trim();
+
+  if (!name || !phone || !debt) {
+    alert('Пожалуйста, заполните все обязательные поля');
+    return;
+  }
+
+  var data = {
+    name: name,
+    phone: phone,
+    debt: debt,
+    comment: comment,
+    ref: refCode,
+    timestamp: new Date().toISOString()
+  };
+
+  console.log('Заявка:', data);
+
+  // TODO: отправить на webhook
+  // fetch('https://n8n.example.com/webhook/ref-lead', {
+  //   method: 'POST',
+  //   headers: {'Content-Type': 'application/json'},
+  //   body: JSON.stringify(data)
+  // });
+
+  document.getElementById('formCard').style.display = 'none';
+  document.getElementById('bottomInfo').style.display = 'none';
+  document.getElementById('thankYou').style.display = 'block';
+});
+</script>
+</body>
+</html>
