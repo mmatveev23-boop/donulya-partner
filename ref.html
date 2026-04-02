@@ -131,8 +131,34 @@ input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px}
 .faq-item.open .faq-a{max-height:200px;padding:0 0 18px}
 .faq-a p{font-size:15px;color:var(--t2);line-height:1.6}
 
+/* Social proof ticker */
+.social-proof{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;padding:10px 20px;border-radius:12px;font-size:13px;box-shadow:0 4px 20px rgba(0,0,0,0.2);z-index:20;display:flex;align-items:center;gap:8px;opacity:0;transition:opacity .4s,transform .4s;pointer-events:none;max-width:340px}
+.social-proof.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.social-proof .dot{width:8px;height:8px;border-radius:50%;background:var(--a2);flex-shrink:0;animation:pulse-dot 1.5s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* Urgency timer */
+.urgency-bar{background:linear-gradient(90deg,#FFF3E0,#FFE0B2);padding:12px 20px;text-align:center;font-size:14px;color:#E65100;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px}
+.urgency-bar .timer{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:16px;color:#BF360C}
+
+/* Floating CTA (mobile) */
+.float-cta{display:none;position:fixed;bottom:0;left:0;right:0;padding:12px 20px;background:rgba(247,250,248,0.95);backdrop-filter:blur(10px);border-top:1px solid #D4E5DA;z-index:15;text-align:center}
+.float-cta a{display:block;padding:14px;border-radius:12px;background:var(--a);color:#fff;font-size:16px;font-weight:700;text-decoration:none;box-shadow:0 4px 16px rgba(0,200,83,0.3)}
+
+/* Share buttons */
+.share-section{padding:32px 0;text-align:center}
+.share-section h3{font-size:18px;font-weight:700;color:var(--dark);margin-bottom:6px}
+.share-section .share-sub{font-size:14px;color:var(--t2);margin-bottom:16px}
+.share-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.share-btn{display:flex;align-items:center;gap:8px;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;color:#fff;text-decoration:none;transition:transform .15s}
+.share-btn:active{transform:scale(0.95)}
+.share-btn.wa{background:#25D366}
+.share-btn.tg-share{background:#2AABEE}
+.share-btn.vk-share{background:#0077FF}
+.share-btn.copy{background:var(--dark);cursor:pointer;border:none;font-family:'Manrope',sans-serif}
+
 /* Final CTA */
-.final-cta{text-align:center;padding:32px 0 48px}
+.final-cta{text-align:center;padding:32px 0 80px}
 .final-cta p{font-size:18px;font-weight:700;color:var(--dark);margin-bottom:16px}
 .final-cta .urgency{font-size:15px;color:var(--t2);margin-bottom:20px}
 
@@ -142,10 +168,17 @@ input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px}
   .trust-bar{gap:8px}
   .calc-box{padding:20px 16px}
   .form-card{padding:24px 16px}
+  .float-cta{display:block}
+  .final-cta{padding-bottom:100px}
 }
 </style>
 </head>
 <body>
+
+<!-- Urgency bar -->
+<div class="urgency-bar">
+  ⏰ Бесплатная консультация доступна ещё <span class="timer" id="urgencyTimer">23:47</span>
+</div>
 
 <!-- Nav -->
 <div class="nav">
@@ -386,6 +419,20 @@ input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px}
   </div>
 </section>
 
+<!-- Share section (visible if ref code exists = partner is sharing) -->
+<section class="share-section" id="shareSection" style="display:none">
+  <div class="wrap">
+    <h3>Поделитесь с теми, кому нужна помощь</h3>
+    <div class="share-sub">Отправьте эту страницу знакомым — возможно, вы измените чью-то жизнь</div>
+    <div class="share-btns">
+      <a class="share-btn wa" id="shareWA" target="_blank">💬 WhatsApp</a>
+      <a class="share-btn tg-share" id="shareTG" target="_blank">✈️ Telegram</a>
+      <a class="share-btn vk-share" id="shareVK" target="_blank">💙 VK</a>
+      <button class="share-btn copy" id="shareCopy">📋 Копировать</button>
+    </div>
+  </div>
+</section>
+
 <!-- Final CTA -->
 <section class="final-cta">
   <div class="wrap">
@@ -395,9 +442,69 @@ input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px}
   </div>
 </section>
 
+<!-- Social proof popup -->
+<div class="social-proof" id="socialProof">
+  <div class="dot"></div>
+  <span id="socialText"></span>
+</div>
+
+<!-- Floating CTA (mobile) -->
+<div class="float-cta">
+  <a href="#formSection">Записаться на бесплатную консультацию</a>
+</div>
+
 <script>
 // Referral code from URL
 var refCode = new URLSearchParams(window.location.search).get('ref') || '';
+var pageUrl = window.location.href;
+
+// Urgency timer (fake countdown, resets daily)
+(function(){
+  var h = 23 - new Date().getHours();
+  var m = 59 - new Date().getMinutes();
+  var el = document.getElementById('urgencyTimer');
+  function tick(){
+    el.textContent = (h<10?'0':'')+h+':'+(m<10?'0':'')+m;
+    if(m===0){m=59;h=Math.max(0,h-1)}else{m--}
+  }
+  tick();
+  setInterval(tick, 60000);
+})();
+
+// Social proof notifications
+(function(){
+  var names = ['Анна','Сергей','Елена','Дмитрий','Ольга','Михаил','Наталья','Алексей','Татьяна','Андрей'];
+  var cities = ['Москва','Краснодар','Новосибирск','Екатеринбург','Казань','Самара','Ростов','Воронеж','Пермь','Уфа'];
+  var actions = ['записался на консультацию','оставил заявку','получил консультацию'];
+  var el = document.getElementById('socialProof');
+  var text = document.getElementById('socialText');
+  function show(){
+    var n = names[Math.floor(Math.random()*names.length)];
+    var c = cities[Math.floor(Math.random()*cities.length)];
+    var a = actions[Math.floor(Math.random()*actions.length)];
+    text.textContent = n+' из г. '+c+' '+a;
+    el.classList.add('show');
+    setTimeout(function(){el.classList.remove('show')}, 4000);
+  }
+  setTimeout(show, 8000);
+  setInterval(show, 25000 + Math.random()*15000);
+})();
+
+// Share buttons (show only if ref code exists)
+if(refCode){
+  document.getElementById('shareSection').style.display = 'block';
+  var shareText = 'Бесплатная консультация по списанию долгов — мне помогли, рекомендую!';
+  document.getElementById('shareWA').href = 'https://wa.me/?text='+encodeURIComponent(shareText+' '+pageUrl);
+  document.getElementById('shareTG').href = 'https://t.me/share/url?url='+encodeURIComponent(pageUrl)+'&text='+encodeURIComponent(shareText);
+  document.getElementById('shareVK').href = 'https://vk.com/share.php?url='+encodeURIComponent(pageUrl)+'&title='+encodeURIComponent(shareText);
+  document.getElementById('shareCopy').addEventListener('click', function(){
+    navigator.clipboard.writeText(pageUrl).then(function(){
+      var btn = document.getElementById('shareCopy');
+      btn.textContent = '✅ Скопировано!';
+      setTimeout(function(){btn.textContent = '📋 Копировать'}, 2000);
+    });
+  });
+}
 
 // Calculator
 var debtSlider = document.getElementById('debtSlider');
