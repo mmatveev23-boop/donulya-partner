@@ -4,149 +4,371 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>ДОНУЛЯ — Бесплатная консультация по списанию долгов</title>
+<meta name="description" content="Узнайте за 5 минут, можно ли законно списать ваши долги. Бесплатная консультация юриста."/>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--a:#00E676;--a-dim:rgba(0,230,118,0.10);--a-glow:rgba(0,230,118,0.25);--bg:#070B08;--card:rgba(17,25,22,0.7);--card-solid:#111916;--t:#EFF5F1;--t2:#7E9487;--bd:rgba(0,230,118,0.08);--r:16px}
-html,body{min-height:100%;background:var(--bg);color:var(--t);font-family:'Manrope',sans-serif;-webkit-font-smoothing:antialiased}
+:root{--a:#00C853;--a2:#00E676;--a-dim:rgba(0,200,83,0.08);--bg:#F7FAF8;--bg2:#EDF2EE;--card:#fff;--dark:#1A2B22;--dark2:#2D3E34;--t:#1A2B22;--t2:#5A7A66;--bd:rgba(0,200,83,0.15);--r:16px;--shadow:0 2px 20px rgba(0,0,0,0.06)}
+html{scroll-behavior:smooth}
+body{min-height:100%;background:var(--bg);color:var(--t);font-family:'Manrope',sans-serif;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
 a{color:var(--a);text-decoration:none}
 
-.wrap{max-width:540px;margin:0 auto;padding:20px 20px 40px}
-
 /* Nav */
-.nav{background:rgba(7,11,8,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--bd);padding:14px 20px;display:flex;align-items:center;justify-content:center;position:sticky;top:0;z-index:10}
+.nav{background:var(--dark);padding:14px 20px;display:flex;align-items:center;justify-content:center;position:sticky;top:0;z-index:10}
 .nav img{height:30px}
 
+/* Container */
+.wrap{max-width:600px;margin:0 auto;padding:0 20px}
+
 /* Hero */
-.hero{text-align:center;padding:40px 0 20px}
-.hero h1{font-size:clamp(24px,5vw,32px);font-weight:800;line-height:1.25;margin-bottom:12px}
+.hero{text-align:center;padding:48px 0 32px}
+.hero-video-wrap{width:100%;max-width:480px;margin:0 auto 24px;border-radius:20px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.12)}
+.hero-video{width:100%;display:block;border-radius:20px}
+.hero h1{font-size:clamp(26px,6vw,36px);font-weight:900;line-height:1.2;margin-bottom:14px;color:var(--dark)}
 .hero h1 span{color:var(--a)}
-.hero p{font-size:16px;color:var(--t2);line-height:1.6}
+.hero p{font-size:17px;color:var(--t2);line-height:1.6;max-width:440px;margin:0 auto}
+.hero-cta{display:inline-block;margin-top:24px;padding:16px 40px;border-radius:14px;background:var(--a);color:#fff;font-size:17px;font-weight:700;border:none;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 20px rgba(0,200,83,0.3)}
+.hero-cta:hover{transform:translateY(-1px);box-shadow:0 6px 24px rgba(0,200,83,0.4)}
 
-/* Trust */
-.trust{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:24px 0}
-.trust-item{text-align:center;padding:16px 8px;border-radius:var(--r);background:var(--card);border:1px solid var(--bd)}
-.trust-icon{font-size:28px;margin-bottom:8px}
-.trust-val{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:18px;color:var(--a)}
-.trust-label{font-size:12px;color:var(--t2);margin-top:4px}
+/* Pain points */
+.pains{padding:40px 0}
+.pains-title{text-align:center;font-size:24px;font-weight:800;margin-bottom:24px;color:var(--dark)}
+.pain-cards{display:flex;flex-direction:column;gap:14px}
+.pain-card{display:flex;gap:16px;align-items:start;padding:20px;border-radius:var(--r);background:var(--card);border:1px solid var(--bd);box-shadow:var(--shadow)}
+.pain-icon{font-size:36px;flex-shrink:0;width:48px;text-align:center}
+.pain-card h3{font-size:17px;font-weight:700;margin-bottom:6px;color:var(--dark)}
+.pain-card p{font-size:15px;color:var(--t2);line-height:1.5}
 
-/* Form */
-.form-card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:28px 20px;margin-top:8px}
-.form-card h2{font-size:20px;font-weight:700;margin-bottom:20px;text-align:center}
+/* Steps */
+.steps{padding:40px 0}
+.steps-title{text-align:center;font-size:24px;font-weight:800;margin-bottom:8px;color:var(--dark)}
+.steps-sub{text-align:center;font-size:15px;color:var(--t2);margin-bottom:28px}
+.step-list{display:flex;flex-direction:column;gap:0}
+.step{display:flex;gap:16px;align-items:start;padding:18px 0;position:relative}
+.step:not(:last-child)::after{content:'';position:absolute;left:19px;top:56px;bottom:0;width:2px;background:linear-gradient(var(--a),transparent)}
+.step-num{width:40px;height:40px;border-radius:50%;background:var(--a);color:#fff;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:16px;flex-shrink:0}
+.step h3{font-size:16px;font-weight:700;margin-bottom:4px}
+.step p{font-size:14px;color:var(--t2);line-height:1.5}
+
+/* Trust stats */
+.trust-bar{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:32px 0}
+.trust-item{text-align:center;padding:20px 8px;border-radius:var(--r);background:var(--dark);color:#fff}
+.trust-val{font-family:'JetBrains Mono',monospace;font-weight:800;font-size:clamp(20px,4vw,28px);color:var(--a2)}
+.trust-label{font-size:12px;color:rgba(255,255,255,0.6);margin-top:6px}
+
+/* Reviews */
+.reviews{padding:24px 0 40px}
+.reviews-title{text-align:center;font-size:20px;font-weight:700;margin-bottom:20px;color:var(--dark)}
+.review{padding:20px;border-radius:var(--r);background:var(--card);border:1px solid var(--bd);box-shadow:var(--shadow);margin-bottom:12px}
+.review-text{font-size:15px;color:var(--t);line-height:1.6;font-style:italic;margin-bottom:10px}
+.review-author{font-size:13px;color:var(--t2);font-weight:600}
+
+/* Calculator */
+.calc-section{padding:32px 0;text-align:center}
+.calc-section h2{font-size:24px;font-weight:800;margin-bottom:8px;color:var(--dark)}
+.calc-section .sub{font-size:15px;color:var(--t2);margin-bottom:24px}
+.calc-box{background:var(--card);border-radius:var(--r);padding:28px 24px;border:1px solid var(--bd);box-shadow:var(--shadow)}
+.calc-debt-display{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:28px;color:var(--dark);margin-bottom:8px}
+input[type=range]{width:100%;height:6px;border-radius:3px;-webkit-appearance:none;appearance:none;cursor:pointer;outline:none;background:var(--bg2);touch-action:none;padding:12px 0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:var(--a);cursor:pointer;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.15)}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px}
+.calc-result-box{margin-top:20px;padding:20px;border-radius:14px;background:linear-gradient(135deg,var(--a),#00E676);text-align:center}
+.calc-result-label{font-size:14px;color:rgba(255,255,255,0.85);margin-bottom:4px}
+.calc-result-val{font-family:'JetBrains Mono',monospace;font-weight:900;font-size:36px;color:#fff}
+.calc-result-hint{font-size:13px;color:rgba(255,255,255,0.75);margin-top:6px}
+
+/* Form section */
+.form-section{padding:40px 0}
+.form-card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:32px 24px;box-shadow:0 4px 30px rgba(0,0,0,0.08)}
+.form-card h2{font-size:22px;font-weight:800;margin-bottom:6px;text-align:center;color:var(--dark)}
+.form-card .form-sub{font-size:14px;color:var(--t2);text-align:center;margin-bottom:24px}
 .field{margin-bottom:16px}
-.field label{display:block;font-size:13px;color:var(--t2);margin-bottom:6px;font-weight:500}
-.field input,.field select,.field textarea{width:100%;padding:14px 16px;border-radius:12px;border:1px solid var(--bd);background:rgba(0,0,0,0.3);color:var(--t);font-family:'Manrope',sans-serif;font-size:16px;outline:none;transition:border-color .2s}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--a)}
-.field input::placeholder,.field textarea::placeholder{color:var(--t2);opacity:0.6}
-.field select{-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237E9487' stroke-width='2' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center}
-.field select option{background:var(--card-solid);color:var(--t)}
+.field label{display:block;font-size:13px;color:var(--t2);margin-bottom:6px;font-weight:600}
+.field input,.field select,.field textarea{width:100%;padding:14px 16px;border-radius:12px;border:1.5px solid #D4E5DA;background:#fff;color:var(--t);font-family:'Manrope',sans-serif;font-size:16px;outline:none;transition:border-color .2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--a);box-shadow:0 0 0 3px rgba(0,200,83,0.1)}
+.field input::placeholder,.field textarea::placeholder{color:#A0B8A8}
+.field select{-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235A7A66' stroke-width='2' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;cursor:pointer}
 .field textarea{resize:vertical;min-height:80px}
-
-.submit-btn{width:100%;padding:16px;border:none;border-radius:14px;background:var(--a);color:#070B08;font-family:'Manrope',sans-serif;font-size:17px;font-weight:700;cursor:pointer;transition:opacity .2s;margin-top:4px}
-.submit-btn:active{opacity:0.85}
-.submit-btn:disabled{opacity:0.5;cursor:not-allowed}
-
-.form-hint{text-align:center;font-size:11px;color:var(--t2);margin-top:12px;line-height:1.5}
+.submit-btn{width:100%;padding:18px;border:none;border-radius:14px;background:var(--a);color:#fff;font-family:'Manrope',sans-serif;font-size:18px;font-weight:800;cursor:pointer;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 20px rgba(0,200,83,0.3);margin-top:4px}
+.submit-btn:active{transform:scale(0.98)}
+.form-guarantee{display:flex;align-items:center;gap:10px;margin-top:16px;padding:14px 16px;border-radius:12px;background:var(--a-dim)}
+.form-guarantee span{font-size:22px}
+.form-guarantee p{font-size:13px;color:var(--t2);line-height:1.4}
+.form-hint{text-align:center;font-size:11px;color:#A0B8A8;margin-top:12px}
 
 /* Thank you */
-.thank-you{display:none;text-align:center;padding:40px 20px}
-.thank-you .icon{font-size:64px;margin-bottom:16px}
-.thank-you h2{font-size:24px;font-weight:800;margin-bottom:12px}
-.thank-you p{font-size:16px;color:var(--t2);line-height:1.6}
+.thank-you{display:none;text-align:center;padding:60px 20px}
+.thank-you .icon{font-size:72px;margin-bottom:20px}
+.thank-you h2{font-size:28px;font-weight:900;margin-bottom:14px;color:var(--dark)}
+.thank-you p{font-size:17px;color:var(--t2);line-height:1.6}
 
-/* Badge */
-.badge{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--a);background:var(--a-dim);border:1px solid var(--bd);border-radius:20px;padding:5px 14px;letter-spacing:1px;text-transform:uppercase}
+/* FAQ */
+.faq{padding:32px 0 40px}
+.faq h2{text-align:center;font-size:24px;font-weight:800;margin-bottom:24px;color:var(--dark)}
+.faq-item{border-bottom:1px solid #D4E5DA;overflow:hidden}
+.faq-q{width:100%;padding:18px 0;display:flex;justify-content:space-between;align-items:center;background:none;border:none;cursor:pointer;font-family:'Manrope',sans-serif;font-size:16px;font-weight:600;color:var(--dark);text-align:left}
+.faq-q::after{content:'+';font-size:24px;color:var(--a);font-weight:300;transition:transform .2s;flex-shrink:0;margin-left:12px}
+.faq-item.open .faq-q::after{transform:rotate(45deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease;padding:0}
+.faq-item.open .faq-a{max-height:200px;padding:0 0 18px}
+.faq-a p{font-size:15px;color:var(--t2);line-height:1.6}
 
-/* Bottom info */
-.bottom-info{margin-top:32px;padding:20px;border-radius:var(--r);background:linear-gradient(135deg,rgba(0,230,118,0.08),rgba(0,230,118,0.02));border:1px solid var(--bd);text-align:center}
-.bottom-info p{font-size:14px;color:var(--t2);line-height:1.6}
+/* Final CTA */
+.final-cta{text-align:center;padding:32px 0 48px}
+.final-cta p{font-size:18px;font-weight:700;color:var(--dark);margin-bottom:16px}
+.final-cta .urgency{font-size:15px;color:var(--t2);margin-bottom:20px}
+
+/* Responsive */
+@media(max-width:480px){
+  .hero{padding:32px 0 24px}
+  .trust-bar{gap:8px}
+  .calc-box{padding:20px 16px}
+  .form-card{padding:24px 16px}
+}
 </style>
 </head>
 <body>
 
+<!-- Nav -->
 <div class="nav">
   <img src="./images/v2/logo-w.svg" alt="ДОНУЛЯ">
 </div>
 
-<div class="wrap">
-
-  <!-- Hero -->
-  <div class="hero">
-    <span class="badge">Бесплатная консультация</span>
-    <h1 style="margin-top:16px">Узнайте, можно ли <span>законно списать</span> ваши долги</h1>
-    <p>Без обязательств. Юрист разберёт вашу ситуацию и расскажет о вариантах</p>
+<!-- Hero -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-video-wrap">
+      <video muted loop playsinline autoplay preload="auto" class="hero-video" poster="./images/v2/ref-hero.webp">
+        <source src="./images/v2/ref-hero.mp4" type="video/mp4">
+        <img src="./images/v2/ref-hero.webp" alt="">
+      </video>
+    </div>
+    <h1>Устали от долгов<br>и <span>коллекторов</span>?</h1>
+    <p>Узнайте за 5 минут, можно ли законно списать ваши долги. Консультация юриста — бесплатно</p>
+    <a href="#formSection" class="hero-cta">Получить бесплатную консультацию</a>
   </div>
+</section>
 
-  <!-- Trust -->
-  <div class="trust">
+<!-- Pain points -->
+<section class="pains">
+  <div class="wrap">
+    <div class="pains-title">Знакомо?</div>
+    <div class="pain-cards">
+      <div class="pain-card">
+        <div class="pain-icon">📞</div>
+        <div>
+          <h3>Коллекторы звонят и угрожают?</h3>
+          <p>Мы остановим звонки и угрозы. По закону вы имеете право на защиту — мы знаем как это сделать</p>
+        </div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">💳</div>
+        <div>
+          <h3>Не можете платить по кредитам?</h3>
+          <p>Есть законный способ снизить платежи или полностью списать долг. Расскажем какие варианты подходят именно вам</p>
+        </div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">📊</div>
+        <div>
+          <h3>Не знаете свою реальную ситуацию?</h3>
+          <p>Закажем вашу кредитную историю и предметно на цифрах покажем — сколько долгов, какие проценты и что с этим делать</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Steps -->
+<section class="steps">
+  <div class="wrap">
+    <div class="steps-title">Как мы работаем</div>
+    <div class="steps-sub">4 простых шага к жизни без долгов</div>
+    <div class="step-list">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>
+          <h3>Проверим кредитную историю</h3>
+          <p>Бесплатно запросим все ваши долги и обязательства — увидите полную картину</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div>
+          <h3>Покажем цифры</h3>
+          <p>Рассчитаем сколько можно списать, какие платежи убрать и сколько вы сэкономите</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div>
+          <h3>Подберём стратегию</h3>
+          <p>Банкротство, реструктуризация или переговоры с банками — выберем то, что подходит вам</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div>
+          <h3>Сопроводим до результата</h3>
+          <p>Юрист ведёт ваше дело от первого документа до полного списания долга</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Trust -->
+<div class="wrap">
+  <div class="trust-bar">
     <div class="trust-item">
-      <div class="trust-icon">👥</div>
       <div class="trust-val">1 200+</div>
       <div class="trust-label">Клиентов</div>
     </div>
     <div class="trust-item">
-      <div class="trust-icon">⚖️</div>
-      <div class="trust-val">100%</div>
-      <div class="trust-label">Законно</div>
+      <div class="trust-val">500М+</div>
+      <div class="trust-label">Списано долгов</div>
     </div>
     <div class="trust-item">
-      <div class="trust-icon">💰</div>
-      <div class="trust-val">0 ₽</div>
-      <div class="trust-label">За консультацию</div>
+      <div class="trust-val">100%</div>
+      <div class="trust-label">По договору</div>
     </div>
   </div>
-
-  <!-- Form -->
-  <div class="form-card" id="formCard">
-    <h2>Оставьте заявку</h2>
-    <form id="refForm" novalidate>
-      <div class="field">
-        <label for="name">Ваше имя</label>
-        <input type="text" id="name" placeholder="Как к вам обращаться?" required autocomplete="name"/>
-      </div>
-      <div class="field">
-        <label for="phone">Номер телефона</label>
-        <input type="tel" id="phone" placeholder="+7 (___) ___-__-__" required autocomplete="tel"/>
-      </div>
-      <div class="field">
-        <label for="debt">Сумма долга</label>
-        <select id="debt" required>
-          <option value="" disabled selected>Выберите диапазон</option>
-          <option value="250-500">250 — 500 тыс. ₽</option>
-          <option value="500-1000">500 тыс. — 1 млн. ₽</option>
-          <option value="1000-3000">1 — 3 млн. ₽</option>
-          <option value="3000+">Более 3 млн. ₽</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="comment">Комментарий <span style="color:var(--t2);font-weight:400">(необязательно)</span></label>
-        <textarea id="comment" placeholder="Опишите вашу ситуацию коротко..."></textarea>
-      </div>
-      <button type="submit" class="submit-btn">Получить бесплатную консультацию</button>
-    </form>
-    <div class="form-hint">Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности</div>
-  </div>
-
-  <!-- Thank you -->
-  <div class="thank-you" id="thankYou">
-    <div class="icon">✅</div>
-    <h2>Спасибо за заявку!</h2>
-    <p>Наш юрист свяжется с вами<br>в течение <strong style="color:var(--a)">30 минут</strong></p>
-    <div class="bottom-info" style="margin-top:24px">
-      <p>Подготовьте документы о задолженности — это ускорит консультацию</p>
-    </div>
-  </div>
-
-  <!-- Bottom -->
-  <div class="bottom-info" id="bottomInfo">
-    <p>Компания ДОНУЛЯ помогает законно списать долги по кредитам, микрозаймам, налогам и ЖКХ от <strong style="color:var(--a)">250 000 ₽</strong></p>
-  </div>
-
 </div>
+
+<!-- Reviews -->
+<section class="reviews">
+  <div class="wrap">
+    <div class="reviews-title">Отзывы наших клиентов</div>
+    <div class="review">
+      <div class="review-text">«Долг был 1,2 млн по трём кредитам. Коллекторы звонили каждый день. Через ДОНУЛЯ всё списали за 8 месяцев. Спасибо огромное!»</div>
+      <div class="review-author">Юрий К., Москва</div>
+    </div>
+    <div class="review">
+      <div class="review-text">«Боялась что заберут квартиру. Оказалось — единственное жильё защищено законом. Списали 800 тысяч, теперь живу спокойно»</div>
+      <div class="review-author">Екатерина В., Краснодар</div>
+    </div>
+    <div class="review">
+      <div class="review-text">«Сначала не верил что можно законно не платить. Юристы всё объяснили на цифрах. Долг 2,5 млн списан полностью»</div>
+      <div class="review-author">Алексей М., Новосибирск</div>
+    </div>
+  </div>
+</section>
+
+<!-- Calculator -->
+<section class="calc-section">
+  <div class="wrap">
+    <h2>Сколько вы можете сэкономить?</h2>
+    <div class="sub">Двигайте ползунок — увидите результат</div>
+    <div class="calc-box">
+      <div style="font-size:13px;color:var(--t2);margin-bottom:4px">Ваш текущий долг</div>
+      <div class="calc-debt-display" id="debtDisplay">1 000 000 ₽</div>
+      <input type="range" min="250" max="5000" value="1000" step="50" id="debtSlider"/>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t2);margin-top:4px"><span>250 тыс.</span><span>5 млн.</span></div>
+      <div class="calc-result-box">
+        <div class="calc-result-label">Вы можете сэкономить до</div>
+        <div class="calc-result-val" id="savingsDisplay">850 000 ₽</div>
+        <div class="calc-result-hint">при полном списании через банкротство</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Form -->
+<section class="form-section" id="formSection">
+  <div class="wrap">
+    <div class="form-card" id="formCard">
+      <h2>Оставьте заявку</h2>
+      <div class="form-sub">Юрист свяжется с вами в течение 30 минут</div>
+      <form id="refForm" novalidate>
+        <div class="field">
+          <label for="name">Ваше имя</label>
+          <input type="text" id="name" placeholder="Как к вам обращаться?" required autocomplete="name"/>
+        </div>
+        <div class="field">
+          <label for="phone">Номер телефона</label>
+          <input type="tel" id="phone" placeholder="+7 (___) ___-__-__" required autocomplete="tel"/>
+        </div>
+        <div class="field">
+          <label for="debt">Сумма долга</label>
+          <select id="debt" required>
+            <option value="" disabled selected>Выберите диапазон</option>
+            <option value="250-500">250 — 500 тыс. ₽</option>
+            <option value="500-1000">500 тыс. — 1 млн. ₽</option>
+            <option value="1000-3000">1 — 3 млн. ₽</option>
+            <option value="3000+">Более 3 млн. ₽</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="comment">Комментарий <span style="color:var(--t2);font-weight:400">(необязательно)</span></label>
+          <textarea id="comment" placeholder="Коротко опишите ситуацию..."></textarea>
+        </div>
+        <button type="submit" class="submit-btn">Получить бесплатную консультацию</button>
+      </form>
+      <div class="form-guarantee">
+        <span>🔒</span>
+        <p>Ваши данные защищены. Консультация бесплатная и ни к чему не обязывает</p>
+      </div>
+      <div class="form-hint">Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности</div>
+    </div>
+
+    <!-- Thank you -->
+    <div class="thank-you" id="thankYou">
+      <div class="icon">🎉</div>
+      <h2>Спасибо за заявку!</h2>
+      <p>Наш юрист свяжется с вами<br>в течение <strong style="color:var(--a)">30 минут</strong></p>
+      <div style="margin-top:24px;padding:20px;border-radius:16px;background:var(--a-dim);border:1px solid var(--bd)">
+        <p style="font-size:15px;color:var(--t2);line-height:1.6">💡 Подготовьте документы о задолженности — это ускорит консультацию</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <div class="wrap">
+    <h2>Частые вопросы</h2>
+    <div class="faq-item">
+      <button class="faq-q">Это правда бесплатно?</button>
+      <div class="faq-a"><p>Да, первая консультация полностью бесплатная. Юрист разберёт вашу ситуацию и расскажет о вариантах. Никаких скрытых платежей</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Что будет с моей квартирой?</button>
+      <div class="faq-a"><p>Единственное жильё защищено законом и не может быть изъято при банкротстве. Юрист подробно объяснит вашу ситуацию</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Как прекратить звонки коллекторов?</button>
+      <div class="faq-a"><p>После подачи заявления на банкротство все звонки и требования прекращаются по закону. Мы также можем помочь до подачи — через официальный отказ от взаимодействия</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Какие долги можно списать?</button>
+      <div class="faq-a"><p>Кредиты, кредитные карты, микрозаймы, налоги, штрафы, долги по ЖКХ — от 250 000 ₽. На консультации юрист определит что подходит в вашем случае</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<section class="final-cta">
+  <div class="wrap">
+    <p>Не откладывайте — каждый день долг растёт</p>
+    <div class="urgency">Пени, проценты и штрафы начисляются ежедневно</div>
+    <a href="#formSection" class="hero-cta">Записаться на консультацию</a>
+  </div>
+</section>
 
 <script>
 // Referral code from URL
 var refCode = new URLSearchParams(window.location.search).get('ref') || '';
+
+// Calculator
+var debtSlider = document.getElementById('debtSlider');
+function updateDebtCalc(v) {
+  var val = v * 1000;
+  document.getElementById('debtDisplay').textContent = val.toLocaleString('ru') + ' ₽';
+  var savings = Math.round(val * 0.85);
+  document.getElementById('savingsDisplay').textContent = savings.toLocaleString('ru') + ' ₽';
+}
+debtSlider.addEventListener('input', function(){updateDebtCalc(+this.value)});
 
 // Phone mask
 var phoneInput = document.getElementById('phone');
@@ -162,6 +384,16 @@ phoneInput.addEventListener('input', function() {
   if (v.length > 7) f += '-' + v.substring(7, 9);
   if (v.length > 9) f += '-' + v.substring(9, 11);
   this.value = f;
+});
+
+// FAQ accordion
+document.querySelectorAll('.faq-q').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    var item = this.parentElement;
+    var wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(function(i){i.classList.remove('open')});
+    if (!wasOpen) item.classList.add('open');
+  });
 });
 
 // Form submit
@@ -188,7 +420,7 @@ document.getElementById('refForm').addEventListener('submit', function(e) {
 
   console.log('Заявка:', data);
 
-  // TODO: отправить на webhook
+  // TODO: webhook n8n
   // fetch('https://n8n.example.com/webhook/ref-lead', {
   //   method: 'POST',
   //   headers: {'Content-Type': 'application/json'},
@@ -196,8 +428,8 @@ document.getElementById('refForm').addEventListener('submit', function(e) {
   // });
 
   document.getElementById('formCard').style.display = 'none';
-  document.getElementById('bottomInfo').style.display = 'none';
   document.getElementById('thankYou').style.display = 'block';
+  window.scrollTo({top: document.getElementById('formSection').offsetTop - 20, behavior: 'smooth'});
 });
 </script>
 </body>
