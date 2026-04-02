@@ -152,9 +152,9 @@ input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px}
 .share-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 .share-btn{display:flex;align-items:center;gap:8px;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;color:#fff;text-decoration:none;transition:transform .15s}
 .share-btn:active{transform:scale(0.95)}
-.share-btn.wa{background:#25D366}
 .share-btn.tg-share{background:#2AABEE}
 .share-btn.vk-share{background:#0077FF}
+.share-btn.max-share{background:linear-gradient(135deg,#3B82F6,#7C3AED,#C026D3)}
 .share-btn.copy{background:var(--dark);cursor:pointer;border:none;font-family:'Manrope',sans-serif}
 
 /* Final CTA */
@@ -425,9 +425,9 @@ input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px}
     <h3>Поделитесь с теми, кому нужна помощь</h3>
     <div class="share-sub">Отправьте эту страницу знакомым — возможно, вы измените чью-то жизнь</div>
     <div class="share-btns">
-      <a class="share-btn wa" id="shareWA" target="_blank">💬 WhatsApp</a>
-      <a class="share-btn tg-share" id="shareTG" target="_blank">✈️ Telegram</a>
-      <a class="share-btn vk-share" id="shareVK" target="_blank">💙 VK</a>
+      <a class="share-btn tg-share" id="shareTG" target="_blank"><img src="./images/v2/tg-logo.png" alt="" style="width:24px;height:24px;border-radius:5px"> Telegram</a>
+      <a class="share-btn vk-share" id="shareVK" target="_blank"><img src="./images/v2/vk-logo.png" alt="" style="width:24px;height:24px;border-radius:5px"> ВКонтакте</a>
+      <a class="share-btn max-share" id="shareMAX" target="_blank"><img src="./images/v2/max-logo.png" alt="" style="width:24px;height:24px;border-radius:5px"> MAX</a>
       <button class="share-btn copy" id="shareCopy">📋 Копировать</button>
     </div>
   </div>
@@ -494,9 +494,9 @@ var pageUrl = window.location.href;
 if(refCode){
   document.getElementById('shareSection').style.display = 'block';
   var shareText = 'Бесплатная консультация по списанию долгов — мне помогли, рекомендую!';
-  document.getElementById('shareWA').href = 'https://wa.me/?text='+encodeURIComponent(shareText+' '+pageUrl);
   document.getElementById('shareTG').href = 'https://t.me/share/url?url='+encodeURIComponent(pageUrl)+'&text='+encodeURIComponent(shareText);
   document.getElementById('shareVK').href = 'https://vk.com/share.php?url='+encodeURIComponent(pageUrl)+'&title='+encodeURIComponent(shareText);
+  document.getElementById('shareMAX').href = 'https://max.ru/share?url='+encodeURIComponent(pageUrl)+'&text='+encodeURIComponent(shareText);
   document.getElementById('shareCopy').addEventListener('click', function(){
     navigator.clipboard.writeText(pageUrl).then(function(){
       var btn = document.getElementById('shareCopy');
