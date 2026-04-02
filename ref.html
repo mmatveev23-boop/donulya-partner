@@ -83,6 +83,9 @@ input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px}
 .form-card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:32px 24px;box-shadow:0 4px 30px rgba(0,0,0,0.08)}
 .form-card h2{font-size:22px;font-weight:800;margin-bottom:6px;text-align:center;color:var(--dark)}
 .form-card .form-sub{font-size:14px;color:var(--t2);text-align:center;margin-bottom:24px}
+.form-steps{display:flex;gap:8px;margin-bottom:24px}
+.form-step-dot{flex:1;height:4px;border-radius:2px;background:#D4E5DA;transition:background .3s}
+.form-step-dot.active{background:var(--a)}
 .field{margin-bottom:16px}
 .field label{display:block;font-size:13px;color:var(--t2);margin-bottom:6px;font-weight:600}
 .field input,.field select,.field textarea{width:100%;padding:14px 16px;border-radius:12px;border:1.5px solid #D4E5DA;background:#fff;color:var(--t);font-family:'Manrope',sans-serif;font-size:16px;outline:none;transition:border-color .2s}
@@ -96,6 +99,20 @@ input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px}
 .form-guarantee span{font-size:22px}
 .form-guarantee p{font-size:13px;color:var(--t2);line-height:1.4}
 .form-hint{text-align:center;font-size:11px;color:#A0B8A8;margin-top:12px}
+
+/* Step 2: Messenger buttons */
+.step2{display:none}
+.step2 h2{font-size:22px;font-weight:800;text-align:center;color:var(--dark);margin-bottom:6px}
+.step2 .step2-sub{font-size:14px;color:var(--t2);text-align:center;margin-bottom:24px}
+.step2-name{font-weight:700;color:var(--a)}
+.msg-btns{display:flex;flex-direction:column;gap:12px}
+.msg-btn{display:flex;align-items:center;justify-content:center;gap:12px;padding:18px;border-radius:14px;font-family:'Manrope',sans-serif;font-size:17px;font-weight:700;color:#fff;border:none;cursor:pointer;transition:transform .15s,box-shadow .15s;text-decoration:none}
+.msg-btn:active{transform:scale(0.97)}
+.msg-btn img{width:28px;height:28px;border-radius:6px}
+.msg-btn.tg{background:#2AABEE;box-shadow:0 4px 16px rgba(42,171,238,0.3)}
+.msg-btn.vk{background:#0077FF;box-shadow:0 4px 16px rgba(0,119,255,0.3)}
+.msg-btn.max{background:linear-gradient(135deg,#3B82F6,#7C3AED,#C026D3);box-shadow:0 4px 16px rgba(124,58,237,0.3)}
+.msg-btn-skip{display:block;text-align:center;margin-top:16px;font-size:14px;color:var(--t2);cursor:pointer;background:none;border:none;font-family:'Manrope',sans-serif;text-decoration:underline}
 
 /* Thank you */
 .thank-you{display:none;text-align:center;padding:60px 20px}
@@ -278,44 +295,66 @@ input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px}
 <section class="form-section" id="formSection">
   <div class="wrap">
     <div class="form-card" id="formCard">
-      <h2>Оставьте заявку</h2>
-      <div class="form-sub">Юрист свяжется с вами в течение 30 минут</div>
-      <form id="refForm" novalidate>
-        <div class="field">
-          <label for="name">Ваше имя</label>
-          <input type="text" id="name" placeholder="Как к вам обращаться?" required autocomplete="name"/>
+      <!-- Step 1: Contact info -->
+      <div id="formStep1">
+        <div class="form-steps"><div class="form-step-dot active"></div><div class="form-step-dot"></div></div>
+        <h2>Оставьте заявку</h2>
+        <div class="form-sub">Шаг 1 из 2 — контактные данные</div>
+        <form id="refForm" novalidate>
+          <div class="field">
+            <label for="name">Ваше имя</label>
+            <input type="text" id="name" placeholder="Как к вам обращаться?" required autocomplete="name"/>
+          </div>
+          <div class="field">
+            <label for="phone">Номер телефона</label>
+            <input type="tel" id="phone" placeholder="+7 (___) ___-__-__" required autocomplete="tel"/>
+          </div>
+          <div class="field">
+            <label for="debt">Сумма долга</label>
+            <select id="debt" required>
+              <option value="" disabled selected>Выберите диапазон</option>
+              <option value="250-500">250 — 500 тыс. ₽</option>
+              <option value="500-1000">500 тыс. — 1 млн. ₽</option>
+              <option value="1000-3000">1 — 3 млн. ₽</option>
+              <option value="3000+">Более 3 млн. ₽</option>
+            </select>
+          </div>
+          <button type="submit" class="submit-btn">Далее →</button>
+        </form>
+        <div class="form-guarantee">
+          <span>🔒</span>
+          <p>Ваши данные защищены. Консультация бесплатная и ни к чему не обязывает</p>
         </div>
-        <div class="field">
-          <label for="phone">Номер телефона</label>
-          <input type="tel" id="phone" placeholder="+7 (___) ___-__-__" required autocomplete="tel"/>
-        </div>
-        <div class="field">
-          <label for="debt">Сумма долга</label>
-          <select id="debt" required>
-            <option value="" disabled selected>Выберите диапазон</option>
-            <option value="250-500">250 — 500 тыс. ₽</option>
-            <option value="500-1000">500 тыс. — 1 млн. ₽</option>
-            <option value="1000-3000">1 — 3 млн. ₽</option>
-            <option value="3000+">Более 3 млн. ₽</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="comment">Комментарий <span style="color:var(--t2);font-weight:400">(необязательно)</span></label>
-          <textarea id="comment" placeholder="Коротко опишите ситуацию..."></textarea>
-        </div>
-        <button type="submit" class="submit-btn">Получить бесплатную консультацию</button>
-      </form>
-      <div class="form-guarantee">
-        <span>🔒</span>
-        <p>Ваши данные защищены. Консультация бесплатная и ни к чему не обязывает</p>
+        <div class="form-hint">Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности</div>
       </div>
-      <div class="form-hint">Нажимая кнопку, вы соглашаетесь с политикой конфиденциальности</div>
+
+      <!-- Step 2: Messenger -->
+      <div class="step2" id="formStep2">
+        <div class="form-steps"><div class="form-step-dot active"></div><div class="form-step-dot active"></div></div>
+        <h2>Куда вам написать?</h2>
+        <div class="step2-sub"><span class="step2-name" id="userName"></span>, выберите мессенджер для связи с юристом</div>
+        <div class="msg-btns">
+          <button class="msg-btn tg" data-messenger="telegram">
+            <img src="./images/v2/tg-logo.png" alt="">
+            Telegram
+          </button>
+          <button class="msg-btn vk" data-messenger="vk">
+            <img src="./images/v2/vk-logo.png" alt="">
+            ВКонтакте
+          </button>
+          <button class="msg-btn max" data-messenger="max">
+            <img src="./images/v2/max-logo.png" alt="">
+            MAX
+          </button>
+        </div>
+        <button class="msg-btn-skip" id="skipMessenger">Пропустить — позвоните мне</button>
+      </div>
     </div>
 
     <!-- Thank you -->
     <div class="thank-you" id="thankYou">
       <div class="icon">🎉</div>
-      <h2>Спасибо за заявку!</h2>
+      <h2>Спасибо, <span id="thankName"></span>!</h2>
       <p>Наш юрист свяжется с вами<br>в течение <strong style="color:var(--a)">30 минут</strong></p>
       <div style="margin-top:24px;padding:20px;border-radius:16px;background:var(--a-dim);border:1px solid var(--bd)">
         <p style="font-size:15px;color:var(--t2);line-height:1.6">💡 Подготовьте документы о задолженности — это ускорит консультацию</p>
@@ -396,41 +435,57 @@ document.querySelectorAll('.faq-q').forEach(function(btn){
   });
 });
 
-// Form submit
+// Form: Step 1 → Step 2
+var leadData = {};
+
 document.getElementById('refForm').addEventListener('submit', function(e) {
   e.preventDefault();
   var name = document.getElementById('name').value.trim();
   var phone = document.getElementById('phone').value.trim();
   var debt = document.getElementById('debt').value;
-  var comment = document.getElementById('comment').value.trim();
 
   if (!name || !phone || !debt) {
     alert('Пожалуйста, заполните все обязательные поля');
     return;
   }
 
-  var data = {
-    name: name,
-    phone: phone,
-    debt: debt,
-    comment: comment,
-    ref: refCode,
-    timestamp: new Date().toISOString()
-  };
+  leadData = {name: name, phone: phone, debt: debt, ref: refCode, timestamp: new Date().toISOString()};
 
-  console.log('Заявка:', data);
+  // Show step 2
+  document.getElementById('formStep1').style.display = 'none';
+  document.getElementById('formStep2').style.display = 'block';
+  document.getElementById('userName').textContent = name;
+  window.scrollTo({top: document.getElementById('formSection').offsetTop - 20, behavior: 'smooth'});
+});
+
+// Step 2: Messenger choice
+document.querySelectorAll('.msg-btn[data-messenger]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    leadData.messenger = this.dataset.messenger;
+    submitLead();
+  });
+});
+
+document.getElementById('skipMessenger').addEventListener('click', function() {
+  leadData.messenger = 'phone';
+  submitLead();
+});
+
+function submitLead() {
+  console.log('Заявка:', leadData);
 
   // TODO: webhook n8n
   // fetch('https://n8n.example.com/webhook/ref-lead', {
   //   method: 'POST',
   //   headers: {'Content-Type': 'application/json'},
-  //   body: JSON.stringify(data)
+  //   body: JSON.stringify(leadData)
   // });
 
   document.getElementById('formCard').style.display = 'none';
   document.getElementById('thankYou').style.display = 'block';
+  document.getElementById('thankName').textContent = leadData.name;
   window.scrollTo({top: document.getElementById('formSection').offsetTop - 20, behavior: 'smooth'});
-});
+}
 </script>
 </body>
 </html>
