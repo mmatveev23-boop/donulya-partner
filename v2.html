@@ -79,8 +79,9 @@ h1 span{color:var(--a)}
 /* Calculator */
 .calc-result{text-align:center;background:rgba(0,230,118,0.04);border-radius:var(--r);padding:24px 20px;border:1px solid var(--bd);margin-top:20px}
 .calc-amount{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:clamp(32px,6vw,48px);color:var(--a);letter-spacing:-.02em}
-input[type=range]{width:100%;height:6px;border-radius:3px;-webkit-appearance:none;appearance:none;cursor:pointer;outline:none;background:#1a2420}
-input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--a);cursor:pointer;border:3px solid var(--bg);box-shadow:0 0 10px var(--a-glow)}
+input[type=range]{width:100%;height:6px;border-radius:3px;-webkit-appearance:none;appearance:none;cursor:pointer;outline:none;background:#1a2420;touch-action:none;padding:12px 0;margin:0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:28px;height:28px;border-radius:50%;background:var(--a);cursor:pointer;border:3px solid var(--bg);box-shadow:0 0 10px var(--a-glow)}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px}
 
 /* Comparison */
 .compare{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:20px}
@@ -675,15 +676,7 @@ function goTo(n) {
 function nextScreen() { if (cur < TOTAL - 1) goTo(cur + 1); }
 function prevScreen() { if (cur > 0) goTo(cur - 1); }
 
-// Swipe support
-let touchX = null;
-document.getElementById('wizard').addEventListener('touchstart', e=>{touchX=e.touches[0].clientX}, {passive:true});
-document.getElementById('wizard').addEventListener('touchend', e=>{
-  if(touchX===null) return;
-  const dx = e.changedTouches[0].clientX - touchX;
-  if(Math.abs(dx) > 50) dx < 0 ? nextScreen() : prevScreen();
-  touchX = null;
-}, {passive:true});
+// Swipe disabled — navigation only via buttons
 
 // Safari video fallback
 const vid = document.getElementById('heroVid');
