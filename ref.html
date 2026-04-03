@@ -581,12 +581,11 @@ document.getElementById('skipMessenger').addEventListener('click', function() {
 function submitLead() {
   console.log('Заявка:', leadData);
 
-  // TODO: webhook n8n
-  // fetch('https://n8n.example.com/webhook/ref-lead', {
-  //   method: 'POST',
-  //   headers: {'Content-Type': 'application/json'},
-  //   body: JSON.stringify(leadData)
-  // });
+  // Google Sheet webhook
+  fetch('https://script.google.com/macros/s/AKfycbwHQruaqI0-6roHyu34HxFqVDYKvILHEhTm01XNR7NfBwHBMgohFMkne3PT7vQla-J1hQ/exec', {
+    method: 'POST',
+    body: JSON.stringify(leadData)
+  }).catch(function(){});
 
   document.getElementById('formCard').style.display = 'none';
   document.getElementById('thankYou').style.display = 'block';
