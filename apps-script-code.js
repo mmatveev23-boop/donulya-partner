@@ -47,10 +47,11 @@ function doPost(e) {
       }
     }
 
+    var phone = (data.phone || '').replace(/[^\d+]/g, '');
     leads.appendRow([
       nextId,
       data.name || '',
-      data.phone || '',
+      "'" + phone,
       data.debt || '',
       data.messenger || '',
       data.ref || '',
