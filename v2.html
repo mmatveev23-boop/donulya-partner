@@ -3,7 +3,34 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>ДОНУЛЯ — Партнёрская программа</title>
+<title>ДоНуля — партнёрская программа | 10 000 ₽ за рекомендацию</title>
+<meta name="description" content="Партнёрская программа ДоНуля: 10 000 ₽ за каждого клиента, заключившего договор по вашей рекомендации. Без лимита по количеству. Бонус 500 ₽ за первый контакт. Подключение в Telegram, ВКонтакте и MAX."/>
+<meta name="keywords" content="ДоНуля, партнёрская программа, реферальная программа, рекомендации, вознаграждение партнёра, долги, юридическая помощь, заработок на рекомендациях"/>
+<meta name="author" content="ДоНуля"/>
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"/>
+<meta name="googlebot" content="index, follow"/>
+<meta name="format-detection" content="telephone=no"/>
+<link rel="canonical" href="https://donula.online/partners/"/>
+<meta name="theme-color" content="#070B08"/>
+<meta name="msapplication-TileColor" content="#070B08"/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="ДоНуля"/>
+<meta property="og:locale" content="ru_RU"/>
+<meta property="og:title" content="ДоНуля — партнёрская программа | 10 000 ₽ за рекомендацию"/>
+<meta property="og:description" content="Рекомендуйте ДоНуля — получайте 10 000 ₽ за каждого клиента с договором. Калькулятор дохода, выплаты без ограничений. Первый номер в мессенджер — бонус 500 ₽."/>
+<meta property="og:url" content="https://donula.online/partners/"/>
+<meta property="og:image" content="https://donula.online/partners/images/v2/hero_3d.jpg"/>
+<meta property="og:image:secure_url" content="https://donula.online/partners/images/v2/hero_3d.jpg"/>
+<meta property="og:image:type" content="image/jpeg"/>
+<meta property="og:image:alt" content="ДоНуля — партнёрская программа: визуал лендинга"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="ДоНуля — партнёрская программа | 10 000 ₽ за рекомендацию"/>
+<meta name="twitter:description" content="Рекомендуйте ДоНуля — получайте 10 000 ₽ за каждого клиента с договором. Без лимита. Бонус 500 ₽ за первый контакт."/>
+<meta name="twitter:image" content="https://donula.online/partners/images/v2/hero_3d.jpg"/>
+<meta name="twitter:image:alt" content="ДоНуля — партнёрская программа"/>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","name":"ДоНуля — партнёрская программа","description":"10 000 ₽ за каждого клиента, заключившего договор по вашей рекомендации. Юристы ДоНуля ведут клиента; партнёру не нужно продавать или консультировать.","url":"https://donula.online/partners/","inLanguage":"ru-RU","isPartOf":{"@type":"WebSite","name":"ДоНуля","url":"https://donula.online/"},"publisher":{"@type":"Organization","name":"ДоНуля","url":"https://donula.online/"}}
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -267,22 +294,22 @@ input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px}
       Передайте первый номер в мессенджер — получите гарантированные <span>500 ₽</span> независимо от результата
     </div>
 
-    <div class="auth-btns">
-      <a href="#" onclick="nextScreen();return false;" class="auth-btn tg">
+    <div class="auth-btns" id="authBtns">
+      <a href="#" onclick="doAuth('telegram');return false;" class="auth-btn tg">
         <img src="./images/v2/tg-logo.png" alt="" style="width:28px;height:28px;border-radius:6px">
         Telegram
       </a>
-      <a href="#" onclick="nextScreen();return false;" class="auth-btn vk">
+      <a href="#" onclick="doAuth('vk');return false;" class="auth-btn vk">
         <img src="./images/v2/vk-logo.png" alt="" style="width:28px;height:28px;border-radius:6px">
         Вконтакте
       </a>
-      <a href="#" onclick="nextScreen();return false;" class="auth-btn max">
+      <a href="#" onclick="doAuth('max');return false;" class="auth-btn max">
         <img src="./images/v2/max-logo.png" alt="" style="width:28px;height:28px;border-radius:6px">
         MAX
       </a>
     </div>
 
-    <div class="auth-hint">Регистрация займёт 30 секунд.<br>Ссылку на обучение пришлём сразу.</div>
+    <div id="authStatus" class="auth-hint">Регистрация займёт 30 секунд.<br>Ссылку на обучение пришлём сразу.</div>
   </div></div>
 
   <!-- Экран 5: Добро пожаловать в обучение -->
@@ -675,6 +702,127 @@ function goTo(n) {
 
 function nextScreen() { if (cur < TOTAL - 1) goTo(cur + 1); }
 function prevScreen() { if (cur > 0) goTo(cur - 1); }
+
+// ── Auth via messengers ──────────────────────────────────────────
+
+const API_BASE = location.hostname.includes('github.io')
+  ? 'https://donula.online/partners/api'
+  : '/partners/api';
+
+// TODO: replace placeholders with real bot/ref-links from Salebot
+const AUTH_LINKS = {
+  telegram: (sid) => 'https://t.me/partners_donulya_bot?start=' + sid,
+  vk:       (sid) => 'https://salebot.pro/ref/06f426980750dcb43bbda9025c50c01a?session_id=' + sid,
+  max:      (sid) => 'https://s.salebot.pro/06f426980750dcb43bbda9025c50c01a_20?session_id=' + sid,
+};
+
+let _authPollTimer = null;
+let _authTimeoutTimer = null;
+let _authSessionId = '';
+
+function generateSessionId() {
+  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  let id = '';
+  for (let i = 0; i < 8; i++) id += chars[Math.floor(Math.random() * chars.length)];
+  return id;
+}
+
+async function doAuth(provider) {
+  // Open popup BEFORE fetch (browser blocks popups after async)
+  const popup = window.open('about:blank', '_blank');
+
+  _authSessionId = generateSessionId();
+
+  // Save session on backend
+  try {
+    await fetch(API_BASE + '/session.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        session_id: _authSessionId,
+        provider: provider,
+        page_url: location.href,
+        referrer: document.referrer || '',
+      }),
+    });
+  } catch (e) {
+    console.error('session save failed', e);
+  }
+
+  // Navigate to bot deep-link
+  const link = AUTH_LINKS[provider](_authSessionId);
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+  if (isMobile) {
+    // Mobile: open in same context (app will intercept the link)
+    if (popup && !popup.closed) popup.close();
+    location.href = link;
+  } else if (popup && !popup.closed) {
+    popup.location.href = link;
+  } else {
+    window.open(link, '_blank');
+  }
+
+  // Update UI: show waiting state
+  const btns = document.getElementById('authBtns');
+  const status = document.getElementById('authStatus');
+  btns.querySelectorAll('.auth-btn').forEach(b => {
+    b.style.pointerEvents = 'none';
+    b.style.opacity = '0.4';
+  });
+  status.innerHTML = '<span style="font-size:20px">⏳</span> Ожидаем авторизацию в боте...<br>' +
+    '<a href="' + link + '" target="_blank" style="font-size:13px;color:var(--a);margin-top:8px;display:inline-block">Открыть бота вручную →</a>';
+
+  // Poll for auth completion
+  _authPollTimer = setInterval(async () => {
+    try {
+      const r = await fetch(API_BASE + '/session.php?session_id=' + _authSessionId);
+      const d = await r.json();
+      if (d.status === 'ok') {
+        clearInterval(_authPollTimer);
+        clearTimeout(_authTimeoutTimer);
+        _authPollTimer = null;
+        // Save auth data locally
+        try {
+          localStorage.setItem('partner_auth', JSON.stringify({
+            session_id: _authSessionId,
+            provider: d.provider,
+            phone: d.phone,
+            name: d.name,
+            platform_id: d.platform_id,
+            ts: Date.now(),
+          }));
+        } catch(e) {}
+        // Proceed to training
+        goTo(cur + 1);
+      }
+    } catch (e) {}
+  }, 2000);
+
+  // Timeout after 120 seconds
+  _authTimeoutTimer = setTimeout(() => {
+    if (_authPollTimer) {
+      clearInterval(_authPollTimer);
+      _authPollTimer = null;
+    }
+    // Reset UI
+    btns.querySelectorAll('.auth-btn').forEach(b => {
+      b.style.pointerEvents = '';
+      b.style.opacity = '';
+    });
+    status.innerHTML = 'Время ожидания истекло.<br>' +
+      '<a href="' + link + '" target="_blank" style="font-size:13px;color:var(--a)">Попробовать ещё раз →</a>';
+  }, 120000);
+}
+
+// Check URL param ?step=N to jump to specific screen (e.g. after auth from bot)
+(function checkStepParam() {
+  const params = new URLSearchParams(location.search);
+  const step = parseInt(params.get('step'), 10);
+  if (step && step > 0 && step < TOTAL) {
+    setTimeout(() => goTo(step - 1), 100); // step is 1-based, screens are 0-based
+  }
+})();
 
 // Swipe disabled — navigation only via buttons
 

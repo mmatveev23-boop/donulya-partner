@@ -1,0 +1,5 @@
+data/sessions/
+data/ratelimit/
+data/webhook.log
+data/session.log
+data/.tg_bot_token
