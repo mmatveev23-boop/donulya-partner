@@ -69,7 +69,7 @@ async function getAccessToken() {
   return await refreshToken(tokens.refresh);
 }
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -109,7 +109,7 @@ export default async function handler(req, res) {
         contacts: [{
           first_name: data.name || '',
           custom_fields_values: [
-            { field_id: 287279, values: [{ value: phone, enum_code: 'WORK' }] }
+            { field_id: 1596487, values: [{ value: phone, enum_code: 'WORK' }] }
           ]
         }]
       }
@@ -124,12 +124,22 @@ export default async function handler(req, res) {
       body: JSON.stringify(payload)
     });
 
-    const result = await amoResp.json();
-    const leadId = result[0]?.id || '';
+    const resultText = await amoResp.text();
+    let leadId = '';
+    try {
+      const result = JSON.parse(resultText);
+      leadId = result[0]?.id || '';
+    } catch(e) {}
 
-    return res.status(200).json({ status: 'ok', lead_id: leadId });
+    return res.status(200).json({
+      status: leadId ? 'ok' : 'amo_error',
+      lead_id: leadId,
+      amo_status: amoResp.status,
+      amo_response: resultText.substring(0, 500),
+      token_preview: token ? token.substring(0, 20) + '...' : 'NO TOKEN'
+    });
 
   } catch (err) {
-    return res.status(500).json({ status: 'error', message: err.message });
+    return res.status(500).json({ status: 'error', message: err.message, stack: err.stack });
   }
 }
