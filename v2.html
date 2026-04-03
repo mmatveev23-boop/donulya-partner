@@ -705,7 +705,7 @@ function nextScreen() {
     var auth = {};
     try { auth = JSON.parse(localStorage.getItem('partner_auth') || '{}'); } catch(e) {}
     var p = (auth.provider || '').toLowerCase();
-    var links = {'telegram':'https://t.me/partners_donulya_bot','tg':'https://t.me/partners_donulya_bot','vk':'https://vk.com/im','max':'https://max.ru'};
+    var links = {'telegram':'https://t.me/partners_donulya_bot','tg':'https://t.me/partners_donulya_bot','vk':'https://vk.ru/?u=2&to=L2FsX2ltLnBocD9zZWw9LTIzNjc1NjM1OQ--','max':'https://max.ru/id470516340503_4_bot'};
     window.location.href = links[p] || links['telegram'];
     return;
   }
