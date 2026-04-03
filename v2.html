@@ -705,8 +705,15 @@ function nextScreen() {
     var auth = {};
     try { auth = JSON.parse(localStorage.getItem('partner_auth') || '{}'); } catch(e) {}
     var p = (auth.provider || '').toLowerCase();
-    var links = {'telegram':'https://t.me/partners_donulya_bot','tg':'https://t.me/partners_donulya_bot','vk':'https://vk.ru/?u=2&to=L2FsX2ltLnBocD9zZWw9LTIzNjc1NjM1OQ--','max':'https://max.ru/id470516340503_4_bot'};
-    window.location.href = links[p] || links['telegram'];
+    var links = {
+      'telegram':'https://t.me/partners_donulya_bot',
+      'tg':'https://t.me/partners_donulya_bot',
+      'vk':'https://vk.ru/?u=2&to=L2FsX2ltLnBocD9zZWw9LTIzNjc1NjM1OQ--',
+      'max':'https://max.ru/id470516340503_4_bot'
+    };
+    var url = links[p] || links['telegram'];
+    var w = window.open(url, '_blank');
+    if (!w) window.location.href = url;
     return;
   }
   if (cur < TOTAL - 1) goTo(cur + 1);
