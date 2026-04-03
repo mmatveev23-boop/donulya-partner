@@ -581,9 +581,10 @@ document.getElementById('skipMessenger').addEventListener('click', function() {
 function submitLead() {
   console.log('Заявка:', leadData);
 
-  // Google Sheet webhook
-  fetch('https://script.google.com/macros/s/AKfycbwHQruaqI0-6roHyu34HxFqVDYKvILHEhTm01XNR7NfBwHBMgohFMkne3PT7vQla-J1hQ/exec', {
+  // amoCRM via Vercel proxy
+  fetch('https://donulya-partner-project-mmatveev23-boops-projects.vercel.app/api/lead', {
     method: 'POST',
+    headers: {'Content-Type': 'application/json'},
     body: JSON.stringify(leadData)
   }).catch(function(){});
 
