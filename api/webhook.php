@@ -117,6 +117,54 @@ function sessionConfirm(string $sid, string $phone, string $name, string $platfo
     return $code === 200;
 }
 
+/**
+ * Create partner in amoCRM via Maksim's Vercel API.
+ * Returns ['ref_code' => '...', 'ref_link' => '...'] on success, or null on failure.
+ */
+function vercelCreatePartner(string $name, string $phone, string $platform, string $platformId): ?array {
+    $url = 'https://donulya-partner-project.vercel.app/api/partner';
+    $payload = json_encode([
+        'name'        => $name,
+        'phone'       => $phone,
+        'platform'    => $platform,   // 'tg', 'vk', 'max'
+        'platform_id' => $platformId,
+    ], JSON_UNESCAPED_UNICODE);
+
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => $payload,
+        CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 15,
+    ]);
+    $resp = curl_exec($ch);
+    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    logMsg("vercelCreatePartner code=$code resp=$resp");
+
+    if ($code >= 200 && $code < 300) {
+        $data = json_decode($resp, true);
+        if (is_array($data) && !empty($data['ref_link'])) {
+            return $data;
+        }
+    }
+    return null;
+}
+
+/**
+ * Map client_type to platform name for Vercel API.
+ */
+function clientTypeToPlatform(string $clientType): string {
+    return match ($clientType) {
+        '1'  => 'tg',
+        '0'  => 'vk',
+        '20' => 'max',
+        default => 'unknown',
+    };
+}
+
 function extractPhone(string $text): string {
     if (preg_match(PHONE_PATTERN, $text, $m)) {
         return preg_replace('/[^\d+]/', '', $m[0]);
@@ -280,15 +328,37 @@ if ($storedSid && $storedStatus === 'waiting_phone') {
         $confirmed = sessionConfirm($storedSid, $phone, $clientName, $platformId, $clientType);
 
         if ($confirmed) {
-            salebotSaveVars($clientId, [
+            // Create partner in amoCRM via Vercel API → get ref_link
+            $platform = clientTypeToPlatform($clientType);
+            $vercelResult = vercelCreatePartner($clientName, $phone, $platform, $platformId);
+
+            $saveVars = [
                 'partner_status' => 'ok',
                 'partner_phone'  => $phone,
-            ]);
+            ];
 
-            $confirmMsg = "✅ Регистрация пройдена!\n\n\n" .
-                "Продолжайте проходить обучение на сайте.\n\n\n" .
-                "Перейдите по ссылке:\n\n" .
-                "🔗 " . SITE_URL_AFTER_AUTH;
+            if ($vercelResult && !empty($vercelResult['ref_link'])) {
+                $refLink = $vercelResult['ref_link'];
+                $refCode = $vercelResult['ref_code'] ?? '';
+                $saveVars['partner_ref_link'] = $refLink;
+                $saveVars['partner_ref_code'] = $refCode;
+
+                $confirmMsg = "🎉 Регистрация завершена!\n\n" .
+                    "Ваша реферальная ссылка:\n" .
+                    $refLink . "\n\n" .
+                    "Делитесь ей в чатах и соцсетях — за каждый договор вы получаете 10 000 ₽\n\n" .
+                    "Продолжайте обучение на сайте:\n" .
+                    "🔗 " . SITE_URL_AFTER_AUTH;
+            } else {
+                // Vercel API failed — fallback message without ref_link
+                logMsg("WARNING: Vercel API failed for phone=$phone, proceeding without ref_link");
+                $confirmMsg = "✅ Регистрация пройдена!\n\n" .
+                    "Продолжайте проходить обучение на сайте.\n\n" .
+                    "Перейдите по ссылке:\n" .
+                    "🔗 " . SITE_URL_AFTER_AUTH;
+            }
+
+            salebotSaveVars($clientId, $saveVars);
 
             if ($isTelegram && $tgBotToken) {
                 tgRemoveKeyboard($tgBotToken, $platformId, $confirmMsg);
