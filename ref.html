@@ -582,7 +582,7 @@ function submitLead() {
   console.log('Заявка:', leadData);
 
   // amoCRM via Vercel proxy
-  fetch('https://donulya-partner-project-ijizoi9f3-mmatveev23-boops-projects.vercel.app/api/lead', {
+  fetch('https://donulya-partner-project.vercel.app/api/lead', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify(leadData)
