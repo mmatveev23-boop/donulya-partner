@@ -103,7 +103,21 @@ module.exports = async function handler(req, res) {
     const token = await getAccessToken();
     if (!token) return res.status(500).json({ error: 'amoCRM auth failed' });
 
-    const refCode = generateRefCode(name);
+    // Generate unique ref code (check amoCRM for duplicates)
+    let refCode = generateRefCode(name);
+    for (let attempt = 0; attempt < 5; attempt++) {
+      const checkResp = await fetch(`https://${AMO_DOMAIN}/api/v4/contacts?query=${refCode}`, {
+        headers: {'Authorization': 'Bearer ' + token}
+      });
+      if (checkResp.ok) {
+        const checkData = await checkResp.json();
+        const exists = (checkData?._embedded?.contacts || []).some(c =>
+          (c.custom_fields_values || []).some(f => f.field_id === CF.refCode && f.values[0]?.value === refCode)
+        );
+        if (!exists) break;
+      }
+      refCode = generateRefCode(name); // regenerate
+    }
     const refLink = 'https://mmatveev23-boop.github.io/donulya-partner/ref.html?ref=' + refCode;
 
     // Build contact custom fields

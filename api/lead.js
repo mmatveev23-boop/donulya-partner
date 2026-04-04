@@ -8,6 +8,11 @@ const AMO_REDIRECT = 'https://mmatveev23-boop.github.io/donulya-partner/';
 const PIPELINE_ID = 10777002;
 const STATUS_NEW = 84857102;
 
+const SALEBOT_API_KEY = process.env.SALEBOT_API_KEY || '15934d777a5f183b3b0389f48b8829d8';
+const SALEBOT_API_BASE = 'https://chatter.salebot.pro/api/' + SALEBOT_API_KEY;
+const CF_MESSENGER_ID = 1700965;
+const CF_PARTNER_REF = 1700959;
+
 // Custom field IDs
 const CF = {
   refCode: 1700947,
@@ -155,7 +160,7 @@ module.exports = async function handler(req, res) {
     // Update partner: move to Active + increment lead counter
     if (leadId && data.ref) {
       try {
-        await updatePartnerOnNewLead(token, data.ref);
+        await updatePartnerOnNewLead(token, data.ref, data.name);
       } catch(partnerErr) {
         console.log('Partner update error:', partnerErr.message);
       }
@@ -169,7 +174,7 @@ module.exports = async function handler(req, res) {
 }
 
 // Find partner contact by ref_code and update counters + status
-async function updatePartnerOnNewLead(token, refCode) {
+async function updatePartnerOnNewLead(token, refCode, leadName) {
   const PARTNER_PIPELINE = 10776994;
   const STATUS_ACTIVE = 84857062;
   const CF_REF_CODE = 1700959;
@@ -216,6 +221,22 @@ async function updatePartnerOnNewLead(token, refCode) {
         headers: {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'},
         body: JSON.stringify({ status_id: STATUS_ACTIVE })
       });
+    }
+
+    // Notify partner via Salebot
+    const messengerIdField = (contact.custom_fields_values || []).find(f => f.field_id === CF_MESSENGER_ID);
+    const messengerId = messengerIdField?.values?.[0]?.value || '';
+    if (messengerId) {
+      try {
+        await fetch(SALEBOT_API_BASE + '/message', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            client_id: messengerId,
+            message: '🔔 Новый лид по вашей ссылке!\n\nИмя: ' + (leadName || 'Не указано') + '\nСтатус: Юрист начал работу\n\nВсего лидов: ' + currentLeads
+          })
+        });
+      } catch(e) {}
     }
     break;
   }

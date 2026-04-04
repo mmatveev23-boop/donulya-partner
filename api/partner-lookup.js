@@ -61,7 +61,7 @@ module.exports = async function handler(req, res) {
       }
     }
 
-    return res.status(404).json({ error: 'partner not found for phone ' + phone });
+    return res.status(404).json({ error: 'not found' });
 
   } catch (err) {
     return res.status(500).json({ status: 'error', message: err.message });
