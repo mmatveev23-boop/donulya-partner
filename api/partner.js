@@ -106,17 +106,20 @@ module.exports = async function handler(req, res) {
     // Generate unique ref code (check amoCRM for duplicates)
     let refCode = generateRefCode(name);
     for (let attempt = 0; attempt < 5; attempt++) {
-      const checkResp = await fetch(`https://${AMO_DOMAIN}/api/v4/contacts?query=${refCode}`, {
-        headers: {'Authorization': 'Bearer ' + token}
-      });
-      if (checkResp.ok) {
-        const checkData = await checkResp.json();
+      try {
+        const checkResp = await fetch(`https://${AMO_DOMAIN}/api/v4/contacts?query=${refCode}`, {
+          headers: {'Authorization': 'Bearer ' + token}
+        });
+        if (checkResp.status === 204 || !checkResp.ok) break; // no results = unique
+        const checkText = await checkResp.text();
+        if (!checkText) break;
+        const checkData = JSON.parse(checkText);
         const exists = (checkData?._embedded?.contacts || []).some(c =>
           (c.custom_fields_values || []).some(f => f.field_id === CF.refCode && f.values[0]?.value === refCode)
         );
         if (!exists) break;
-      }
-      refCode = generateRefCode(name); // regenerate
+      } catch(e) { break; }
+      refCode = generateRefCode(name);
     }
     const refLink = 'https://mmatveev23-boop.github.io/donulya-partner/ref.html?ref=' + refCode;
 
