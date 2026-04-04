@@ -700,23 +700,23 @@ function goTo(n) {
   }
 }
 
-// Direct bot links (no session_id — partner already registered)
-const BOT_LINKS = {
-  telegram: 'https://t.me/partners_donulya_bot',
-  vk:       'https://vk.com/im?sel=-236756359',
-  max:      'https://max.ru/chat/id470516340503_4_bot',
+// Deep-links to bot with "trained" marker — so bot knows training is done
+const BOT_TRAINED_LINKS = {
+  telegram: 'https://t.me/partners_donulya_bot?start=trained',
+  vk:       'https://salebot.pro/ref/06f426980750dcb43bbda9025c50c01a?trained=1',
+  max:      'https://s.salebot.pro/06f426980750dcb43bbda9025c50c01a_20?trained=1',
 };
 
 function nextScreen() {
-  // Last screen — redirect to messenger bot
+  // Last screen — redirect to messenger bot with "trained" marker
   if (cur === TOTAL - 1) {
     try {
       const auth = JSON.parse(localStorage.getItem('partner_auth') || '{}');
       const provider = auth.provider || 'telegram';
-      const link = BOT_LINKS[provider] || BOT_LINKS.telegram;
+      const link = BOT_TRAINED_LINKS[provider] || BOT_TRAINED_LINKS.telegram;
       window.location.href = link;
     } catch(e) {
-      window.location.href = BOT_LINKS.telegram;
+      window.location.href = BOT_TRAINED_LINKS.telegram;
     }
     return;
   }
