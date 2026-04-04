@@ -427,7 +427,7 @@ $tgBotToken = trim($tgBotToken ?: '');
 
 $isTelegram = ($clientType === '1');
 
-// ── Registered partner: waiting for lead info ───────────────────
+// ── Trained partner: waiting for lead info ───────────────────────
 
 if ($storedStatus === 'waiting_lead') {
     $refCode = $orderVars['partner_ref_code'] ?? '';
@@ -435,7 +435,7 @@ if ($storedStatus === 'waiting_lead') {
 
     // "Меню" or "Скопировать ссылку" — go back to menu
     if (mb_stripos($message, 'меню') !== false || $message === BTN_COPY_LINK) {
-        salebotSaveVars($clientId, ['partner_status' => 'ok']);
+        salebotSaveVars($clientId, ['partner_status' => 'trained']);
         if ($message === BTN_COPY_LINK && $refLink) {
             salebotSend($clientId, $refLink);
         }
@@ -453,7 +453,7 @@ if ($storedStatus === 'waiting_lead') {
         $result = vercelCreateLead($refCode, $leadName, $leadPhone);
 
         if ($result !== null) {
-            salebotSaveVars($clientId, ['partner_status' => 'ok']);
+            salebotSaveVars($clientId, ['partner_status' => 'trained']);
 
             $successMsg = "✅ Номер передан!\n\n" .
                 "Имя: $leadName\n" .
@@ -491,9 +491,9 @@ if ($storedStatus === 'waiting_lead') {
     exit;
 }
 
-// ── Already registered — partner menu ───────────────────────────
+// ── Trained partner — partner menu ──────────────────────────────
 
-if ($storedStatus === 'ok') {
+if ($storedStatus === 'trained') {
     $refLink = $orderVars['partner_ref_link'] ?? '';
     $refCode = $orderVars['partner_ref_code'] ?? '';
 
@@ -525,10 +525,47 @@ if ($storedStatus === 'ok') {
     } else {
         salebotSend($clientId,
             "Вы уже зарегистрированы! 🎉\n\n" .
-            "Продолжайте обучение:\n" .
-            "🔗 " . SITE_URL_AFTER_AUTH
+            "Обратитесь в поддержку для получения реферальной ссылки."
         );
     }
+    echo json_encode(['ok' => true]);
+    exit;
+}
+
+// ── Registered but NOT trained — send to training ───────────────
+
+if ($storedStatus === 'registered') {
+    $refLink = $orderVars['partner_ref_link'] ?? '';
+
+    // Check if returning after training — triggered by "Начать зарабатывать" deep-link:
+    // TG: /start trained → tag = "trained"
+    // VK/MAX: Salebot ref-link with ?trained=1 → client.variables.trained = "1"
+    $clientVarsTrainedCheck = $client['variables'] ?? [];
+    $isTrained = ($tag === 'trained') ||
+                 (strtolower($message) === 'trained') ||
+                 (!empty($clientVarsTrainedCheck['trained']));
+
+    if ($isTrained) {
+        salebotSaveVars($clientId, ['partner_status' => 'trained']);
+
+        if ($refLink) {
+            sendPartnerMenu($clientId, $clientType, $platformId, $tgBotToken, $refLink);
+        } else {
+            salebotSend($clientId,
+                "🎓 Обучение пройдено!\n\n" .
+                "Реферальная ссылка не найдена. Обратитесь в поддержку."
+            );
+        }
+        echo json_encode(['ok' => true]);
+        exit;
+    }
+
+    // Not trained yet — remind to finish training
+    salebotSend($clientId,
+        "Вы уже зарегистрированы! 🎉\n\n" .
+        "Пройдите обучение на сайте — это займёт 5 минут:\n" .
+        "🔗 " . SITE_URL_AFTER_AUTH
+    );
     echo json_encode(['ok' => true]);
     exit;
 }
@@ -548,7 +585,7 @@ if ($storedSid && $storedStatus === 'waiting_phone') {
             $vercelResult = vercelCreatePartner($clientName, $phone, $platform, $platformId);
 
             $saveVars = [
-                'partner_status' => 'ok',
+                'partner_status' => 'registered',
                 'partner_phone'  => $phone,
             ];
 
