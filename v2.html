@@ -698,6 +698,29 @@ function goTo(n) {
       cv.play().catch(function(){});
     } else { cv.pause(); }
   }
+
+  // Track partner status in amoCRM
+  var auth = {};
+  try { auth = JSON.parse(localStorage.getItem('partner_auth') || '{}'); } catch(e) {}
+  var rc = auth.ref_code || '';
+  if (rc) {
+    // Screen 5 (index 4) = started training
+    if (n === 4 && !window._sentTraining) {
+      window._sentTraining = true;
+      fetch('https://donulya-partner-project.vercel.app/api/partner-status', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ref_code: rc, status: 'training'})
+      }).catch(function(){});
+    }
+    // Last screen = training complete
+    if (n === TOTAL - 1 && !window._sentTrained) {
+      window._sentTrained = true;
+      fetch('https://donulya-partner-project.vercel.app/api/partner-status', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ref_code: rc, status: 'trained'})
+      }).catch(function(){});
+    }
+  }
 }
 
 // Deep-links to bot with "trained" marker
@@ -804,6 +827,14 @@ async function doAuth(provider) {
         clearTimeout(_authTimeoutTimer);
         _authPollTimer = null;
         // Save auth data locally
+        // Get ref_code from Vercel (partner was created by webhook)
+        var refCode = '';
+        try {
+          var pResp = await fetch('https://donulya-partner-project.vercel.app/api/partner-lookup?phone=' + encodeURIComponent(d.phone));
+          var pData = await pResp.json();
+          refCode = pData.ref_code || '';
+        } catch(e) {}
+
         try {
           localStorage.setItem('partner_auth', JSON.stringify({
             session_id: _authSessionId,
@@ -811,6 +842,7 @@ async function doAuth(provider) {
             phone: d.phone,
             name: d.name,
             platform_id: d.platform_id,
+            ref_code: refCode,
             ts: Date.now(),
           }));
         } catch(e) {}

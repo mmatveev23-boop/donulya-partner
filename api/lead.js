@@ -131,15 +131,71 @@ module.exports = async function handler(req, res) {
       leadId = result[0]?.id || '';
     } catch(e) {}
 
-    return res.status(200).json({
-      status: leadId ? 'ok' : 'amo_error',
-      lead_id: leadId,
-      amo_status: amoResp.status,
-      amo_response: resultText.substring(0, 500),
-      token_preview: token ? token.substring(0, 20) + '...' : 'NO TOKEN'
-    });
+    // Update partner: move to Active + increment lead counter
+    if (leadId && data.ref) {
+      try {
+        await updatePartnerOnNewLead(token, data.ref);
+      } catch(partnerErr) {
+        console.log('Partner update error:', partnerErr.message);
+      }
+    }
+
+    return res.status(200).json({ status: leadId ? 'ok' : 'amo_error', lead_id: leadId });
 
   } catch (err) {
-    return res.status(500).json({ status: 'error', message: err.message, stack: err.stack });
+    return res.status(500).json({ status: 'error', message: err.message });
+  }
+}
+
+// Find partner contact by ref_code and update counters + status
+async function updatePartnerOnNewLead(token, refCode) {
+  const PARTNER_PIPELINE = 10776994;
+  const STATUS_ACTIVE = 84857062;
+  const CF_REF_CODE = 1700959;
+  const CF_TOTAL_LEADS = 1700969;
+
+  // Search all leads in partner pipeline
+  const resp = await fetch(`https://${AMO_DOMAIN}/api/v4/leads?filter[pipeline_id]=${PARTNER_PIPELINE}&with=contacts&limit=250`, {
+    headers: {'Authorization': 'Bearer ' + token}
+  });
+  if (!resp.ok) return;
+  const data = await resp.json();
+  const leads = data?._embedded?.leads || [];
+
+  for (const lead of leads) {
+    const contactId = lead._embedded?.contacts?.[0]?.id;
+    if (!contactId) continue;
+
+    const cResp = await fetch(`https://${AMO_DOMAIN}/api/v4/contacts/${contactId}`, {
+      headers: {'Authorization': 'Bearer ' + token}
+    });
+    if (!cResp.ok) continue;
+    const contact = await cResp.json();
+    const refField = (contact.custom_fields_values || []).find(f => f.field_id === CF_REF_CODE);
+    if (!refField || refField.values[0]?.value !== refCode) continue;
+
+    // Found partner! Update lead counter
+    const leadsField = (contact.custom_fields_values || []).find(f => f.field_id === CF_TOTAL_LEADS);
+    const currentLeads = parseInt(leadsField?.values?.[0]?.value || '0') + 1;
+
+    // Update contact: increment leads
+    await fetch(`https://${AMO_DOMAIN}/api/v4/contacts/${contactId}`, {
+      method: 'PATCH',
+      headers: {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'},
+      body: JSON.stringify({ custom_fields_values: [
+        { field_id: CF_TOTAL_LEADS, values: [{ value: currentLeads }] }
+      ]})
+    });
+
+    // Move partner to Active (if not already Active/Pro/Top)
+    const activeStatuses = [84857062, 84857066, 84857070]; // Active, Pro, Top
+    if (!activeStatuses.includes(lead.status_id)) {
+      await fetch(`https://${AMO_DOMAIN}/api/v4/leads/${lead.id}`, {
+        method: 'PATCH',
+        headers: {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'},
+        body: JSON.stringify({ status_id: STATUS_ACTIVE })
+      });
+    }
+    break;
   }
 }
