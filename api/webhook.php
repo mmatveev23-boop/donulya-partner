@@ -20,6 +20,12 @@ const SALEBOT_API_BASE = 'https://chatter.salebot.pro/api/' . SALEBOT_API_KEY;
 const SESSION_API_URL = 'https://donula.online/partners/api/session.php';
 const SITE_URL = 'https://donula.online/partners/';
 const SITE_URL_AFTER_AUTH = 'https://donula.online/partners/?step=5';
+const VERCEL_LEAD_URL = 'https://donulya-partner-project.vercel.app/api/lead';
+
+// Button labels (used for text matching)
+const BTN_SEND_LEAD  = '📞 Передать номер';
+const BTN_COPY_LINK  = '📎 Скопировать ссылку';
+const BTN_MENU       = '📋 Меню';
 
 const SESSION_ID_PATTERN = '/^[a-z0-9]{8}$/';
 const PHONE_PATTERN = '/(?:\+?7|8)[\s\-]?\(?\d{3}\)?[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}/';
@@ -165,6 +171,121 @@ function clientTypeToPlatform(string $clientType): string {
     };
 }
 
+/**
+ * Send lead to Vercel API.
+ * Returns response array on success, null on failure.
+ */
+function vercelCreateLead(string $refCode, string $name, string $phone): ?array {
+    $payload = json_encode([
+        'ref_code' => $refCode,
+        'name'     => $name,
+        'phone'    => $phone,
+    ], JSON_UNESCAPED_UNICODE);
+
+    $ch = curl_init(VERCEL_LEAD_URL);
+    curl_setopt_array($ch, [
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => $payload,
+        CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 15,
+    ]);
+    $resp = curl_exec($ch);
+    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    logMsg("vercelCreateLead ref_code=$refCode code=$code resp=$resp");
+
+    if ($code >= 200 && $code < 300) {
+        return json_decode($resp, true) ?: ['ok' => true];
+    }
+    return null;
+}
+
+/**
+ * Send TG message with custom reply keyboard (not contact request).
+ */
+function tgSendWithKeyboard(string $tgBotToken, string $chatId, string $text, array $keyboard): bool {
+    $url = "https://api.telegram.org/bot$tgBotToken/sendMessage";
+    $payload = [
+        'chat_id' => $chatId,
+        'text'    => $text,
+        'reply_markup' => json_encode([
+            'keyboard'        => $keyboard,
+            'resize_keyboard' => true,
+        ]),
+    ];
+
+    $ch = curl_init($url);
+    curl_setopt_array($ch, [
+        CURLOPT_POST           => true,
+        CURLOPT_POSTFIELDS     => http_build_query($payload),
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_TIMEOUT        => 10,
+    ]);
+    $resp = curl_exec($ch);
+    $code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    logMsg("tgSendKeyboard chatId=$chatId code=$code");
+    return $code === 200;
+}
+
+/**
+ * Send the partner menu message with buttons.
+ */
+function sendPartnerMenu(string $clientId, string $clientType, string $platformId, string $tgBotToken, string $refLink): void {
+    $menuText = "🎓 Обучение пройдено! Вы готовы зарабатывать.\n\n" .
+        "Ваша реферальная ссылка:\n" .
+        "🔗 $refLink\n\n" .
+        "Два способа заработать прямо сейчас:\n\n" .
+        "1️⃣ Передайте первый номер\n" .
+        "Напишите мне имя и телефон человека с долгами — за первый номер вы получите 500 ₽ гарантированно\n\n" .
+        "2️⃣ Поделитесь ссылкой\n" .
+        "Отправьте ссылку друзьям или в чат — за каждый договор вы получаете 10 000 ₽\n\n" .
+        "👇 Что выберете?";
+
+    $isTelegram = ($clientType === '1');
+
+    if ($isTelegram && $tgBotToken) {
+        $keyboard = [
+            [['text' => BTN_SEND_LEAD], ['text' => BTN_COPY_LINK]],
+        ];
+        tgSendWithKeyboard($tgBotToken, $platformId, $menuText, $keyboard);
+    } else {
+        // Salebot buttons: array of rows, each row is array of button labels
+        $buttons = [[BTN_SEND_LEAD, BTN_COPY_LINK]];
+        salebotSend($clientId, $menuText, $buttons);
+    }
+}
+
+/**
+ * Extract name and phone from lead message.
+ * Expected: "Иван Петров +79991234567" or "Иван +79991234567" or just name\nphone
+ * Returns [name, phone] or null if phone not found.
+ */
+function parseLeadInfo(string $text): ?array {
+    $phone = '';
+    if (preg_match(PHONE_PATTERN, $text, $m)) {
+        $phone = preg_replace('/[^\d+]/', '', $m[0]);
+    }
+    if (!$phone) {
+        // Try just digits
+        $digits = preg_replace('/\D/', '', $text);
+        if (strlen($digits) >= 10 && strlen($digits) <= 12) {
+            $phone = '+' . ltrim($digits, '+');
+        }
+    }
+    if (!$phone) return null;
+
+    // Name = everything except the phone part
+    $name = trim(preg_replace(PHONE_PATTERN, '', $text));
+    $name = trim(preg_replace('/[\d\+\-\(\)\s]{7,}/', '', $name)); // remove remaining digit clusters
+    if (!$name) $name = 'Без имени';
+
+    return [$name, $phone];
+}
+
 function extractPhone(string $text): string {
     if (preg_match(PHONE_PATTERN, $text, $m)) {
         return preg_replace('/[^\d+]/', '', $m[0]);
@@ -306,14 +427,108 @@ $tgBotToken = trim($tgBotToken ?: '');
 
 $isTelegram = ($clientType === '1');
 
-// ── Already registered ───────────────────────────────────────────
+// ── Registered partner: waiting for lead info ───────────────────
+
+if ($storedStatus === 'waiting_lead') {
+    $refCode = $orderVars['partner_ref_code'] ?? '';
+    $refLink = $orderVars['partner_ref_link'] ?? '';
+
+    // "Меню" or "Скопировать ссылку" — go back to menu
+    if (mb_stripos($message, 'меню') !== false || $message === BTN_COPY_LINK) {
+        salebotSaveVars($clientId, ['partner_status' => 'ok']);
+        if ($message === BTN_COPY_LINK && $refLink) {
+            salebotSend($clientId, $refLink);
+        }
+        sendPartnerMenu($clientId, $clientType, $platformId, $tgBotToken, $refLink);
+        echo json_encode(['ok' => true]);
+        exit;
+    }
+
+    // Try to parse lead name + phone
+    $lead = parseLeadInfo($message);
+
+    if ($lead) {
+        [$leadName, $leadPhone] = $lead;
+
+        $result = vercelCreateLead($refCode, $leadName, $leadPhone);
+
+        if ($result !== null) {
+            salebotSaveVars($clientId, ['partner_status' => 'ok']);
+
+            $successMsg = "✅ Номер передан!\n\n" .
+                "Имя: $leadName\n" .
+                "Телефон: $leadPhone\n\n" .
+                "Мы свяжемся с ним. Если дело дойдёт до договора — вы получите 10 000 ₽\n\n" .
+                "Хотите передать ещё один номер или поделиться ссылкой?";
+
+            if ($isTelegram && $tgBotToken) {
+                $keyboard = [
+                    [['text' => BTN_SEND_LEAD], ['text' => BTN_COPY_LINK]],
+                ];
+                tgSendWithKeyboard($tgBotToken, $platformId, $successMsg, $keyboard);
+            } else {
+                salebotSend($clientId, $successMsg, [[BTN_SEND_LEAD, BTN_COPY_LINK]]);
+            }
+        } else {
+            salebotSend($clientId,
+                "Произошла ошибка при передаче номера. Попробуйте ещё раз.\n\n" .
+                "Введите имя и телефон человека:"
+            );
+        }
+
+        echo json_encode(['ok' => true]);
+        exit;
+    }
+
+    // Not a valid lead — remind format
+    salebotSend($clientId,
+        "Не удалось распознать номер телефона.\n\n" .
+        "Введите имя и телефон в одном сообщении, например:\n" .
+        "Иван Петров +79991234567\n\n" .
+        "Или нажмите «" . BTN_MENU . "» чтобы вернуться."
+    );
+    echo json_encode(['ok' => true]);
+    exit;
+}
+
+// ── Already registered — partner menu ───────────────────────────
 
 if ($storedStatus === 'ok') {
-    salebotSend($clientId,
-        "Вы уже зарегистрированы! 🎉\n\n" .
-        "Продолжайте обучение:\n" .
-        "🔗 " . SITE_URL
-    );
+    $refLink = $orderVars['partner_ref_link'] ?? '';
+    $refCode = $orderVars['partner_ref_code'] ?? '';
+
+    // Handle button: "📞 Передать номер"
+    if ($message === BTN_SEND_LEAD) {
+        salebotSaveVars($clientId, ['partner_status' => 'waiting_lead']);
+        salebotSend($clientId,
+            "Введите имя и телефон человека с долгами в одном сообщении.\n\n" .
+            "Например:\nИван Петров +79991234567"
+        );
+        echo json_encode(['ok' => true]);
+        exit;
+    }
+
+    // Handle button: "📎 Скопировать ссылку"
+    if ($message === BTN_COPY_LINK) {
+        if ($refLink) {
+            salebotSend($clientId, $refLink);
+        } else {
+            salebotSend($clientId, "Реферальная ссылка не найдена. Обратитесь в поддержку.");
+        }
+        echo json_encode(['ok' => true]);
+        exit;
+    }
+
+    // Default: show partner menu
+    if ($refLink) {
+        sendPartnerMenu($clientId, $clientType, $platformId, $tgBotToken, $refLink);
+    } else {
+        salebotSend($clientId,
+            "Вы уже зарегистрированы! 🎉\n\n" .
+            "Продолжайте обучение:\n" .
+            "🔗 " . SITE_URL_AFTER_AUTH
+        );
+    }
     echo json_encode(['ok' => true]);
     exit;
 }
