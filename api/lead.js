@@ -131,6 +131,27 @@ module.exports = async function handler(req, res) {
       leadId = result[0]?.id || '';
     } catch(e) {}
 
+    // Create task for manager: "Позвонить клиенту за 30 минут"
+    if (leadId) {
+      try {
+        const taskDue = Math.floor(Date.now() / 1000) + 1800; // +30 min
+        await fetch(`https://${AMO_DOMAIN}/api/v4/tasks`, {
+          method: 'POST',
+          headers: {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'},
+          body: JSON.stringify([{
+            text: 'Позвонить клиенту (партнёрский лид от ' + (data.ref || 'прямой') + '). Имя: ' + (data.name || '') + ', тел: ' + phone,
+            complete_till: taskDue,
+            entity_id: leadId,
+            entity_type: 'leads',
+            task_type_id: 1, // Звонок
+            responsible_user_id: 1702497 // Лесников Евгений
+          }])
+        });
+      } catch(taskErr) {
+        console.log('Task creation error:', taskErr.message);
+      }
+    }
+
     // Update partner: move to Active + increment lead counter
     if (leadId && data.ref) {
       try {
