@@ -176,10 +176,7 @@ input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px}
   <div class="screen active" id="s1"><div class="screen-inner">
     <div style="text-align:center">
       <div class="hero-visual">
-        <video id="heroVid" autoplay loop muted playsinline webkit-playsinline preload="auto" poster="./images/v2/hero_3d.jpg">
-          <source src="./images/v2/hero_safari.mp4" type="video/mp4">
-          <img src="./images/v2/hero_3d.jpg" alt="hero">
-        </video>
+        <img src="./images/v2/hero_anim.webp" alt="hero" loading="eager">
       </div>
       <span class="badge">Партнёрская программа</span>
       <h1>Рекомендуй нас —<br><span>получи 10 000 ₽</span></h1>
@@ -881,16 +878,7 @@ async function doAuth(provider) {
 
 // Swipe disabled — navigation only via buttons
 
-// Safari video fallback
-const vid = document.getElementById('heroVid');
-if(vid){
-  vid.play().catch(()=>{
-    vid.style.display='none';
-    vid.parentElement.style.backgroundImage='url(./images/v2/hero_3d.jpg)';
-    vid.parentElement.style.backgroundSize='cover';
-    vid.parentElement.style.backgroundPosition='center';
-  });
-}
+// Hero: animated WebP (no autoplay issues)
 </script>
 </body>
 </html>
