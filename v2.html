@@ -883,8 +883,9 @@ async function doAuth(provider) {
 const vid = document.getElementById('heroVid');
 if(vid){
   vid.play().catch(()=>{
-    vid.style.display='none';
-    document.querySelector('.hero-visual img') && (document.querySelector('.hero-visual img').style.display='block');
+    vid.poster='./images/v2/hero_3d.jpg';
+    vid.controls=false;
+    vid.removeAttribute('autoplay');
   });
 }
 </script>
