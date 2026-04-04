@@ -885,9 +885,10 @@ async function doAuth(provider) {
 const vid = document.getElementById('heroVid');
 if(vid){
   vid.play().catch(()=>{
-    vid.poster='./images/v2/hero_3d.jpg';
-    vid.controls=false;
-    vid.removeAttribute('autoplay');
+    vid.style.display='none';
+    vid.parentElement.style.backgroundImage='url(./images/v2/hero_3d.jpg)';
+    vid.parentElement.style.backgroundSize='cover';
+    vid.parentElement.style.backgroundPosition='center';
   });
 }
 </script>
