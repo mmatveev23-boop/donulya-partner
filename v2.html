@@ -555,7 +555,7 @@ input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px}
   </div></div>
 
   <!-- Экран 15: Поздравление -->
-  <div class="screen" id="s15" data-btn="Начать зарабатывать и перейти в группу"><div class="screen-inner">
+  <div class="screen" id="s15" data-btn="🚀 Начать зарабатывать"><div class="screen-inner">
     <div style="text-align:center;padding:20px 0">
       <div style="width:100%;max-width:360px;margin:0 auto 16px;border-radius:20px;overflow:hidden;box-shadow:0 0 40px rgba(0,230,118,0.2)">
         <video muted loop playsinline class="congrats-video" style="width:100%;display:block;border-radius:20px"></video>
@@ -700,20 +700,24 @@ function goTo(n) {
   }
 }
 
+// Direct bot links
+const BOT_LINKS = {
+  telegram: 'https://t.me/partners_donulya_bot',
+  tg:       'https://t.me/partners_donulya_bot',
+  vk:       'https://vk.com/im?sel=-236756359',
+  max:      'https://max.ru/chat/id470516340503_4_bot',
+};
+
 function nextScreen() {
   if (cur === TOTAL - 1) {
-    var auth = {};
-    try { auth = JSON.parse(localStorage.getItem('partner_auth') || '{}'); } catch(e) {}
-    var p = (auth.provider || '').toLowerCase();
-    var links = {
-      'telegram':'https://t.me/partners_donulya_bot',
-      'tg':'https://t.me/partners_donulya_bot',
-      'vk':'https://vk.ru/?u=2&to=L2FsX2ltLnBocD9zZWw9LTIzNjc1NjM1OQ--',
-      'max':'https://max.ru/id470516340503_4_bot'
-    };
-    var url = links[p] || links['telegram'];
-    var w = window.open(url, '_blank');
-    if (!w) window.location.href = url;
+    try {
+      var auth = JSON.parse(localStorage.getItem('partner_auth') || '{}');
+      var provider = (auth.provider || 'telegram').toLowerCase();
+      var link = BOT_LINKS[provider] || BOT_LINKS.telegram;
+      window.location.href = link;
+    } catch(e) {
+      window.location.href = BOT_LINKS.telegram;
+    }
     return;
   }
   if (cur < TOTAL - 1) goTo(cur + 1);
