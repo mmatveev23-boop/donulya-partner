@@ -555,7 +555,7 @@ input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:3px}
   </div></div>
 
   <!-- Экран 15: Поздравление -->
-  <div class="screen" id="s15" data-btn="Начать зарабатывать и перейти в группу"><div class="screen-inner">
+  <div class="screen" id="s15" data-btn="🚀 Начать зарабатывать"><div class="screen-inner">
     <div style="text-align:center;padding:20px 0">
       <div style="width:100%;max-width:360px;margin:0 auto 16px;border-radius:20px;overflow:hidden;box-shadow:0 0 40px rgba(0,230,118,0.2)">
         <video muted loop playsinline class="congrats-video" style="width:100%;display:block;border-radius:20px"></video>
@@ -700,7 +700,28 @@ function goTo(n) {
   }
 }
 
-function nextScreen() { if (cur < TOTAL - 1) goTo(cur + 1); }
+// Direct bot links (no session_id — partner already registered)
+const BOT_LINKS = {
+  telegram: 'https://t.me/partners_donulya_bot',
+  vk:       'https://vk.com/im?sel=-236756359',
+  max:      'https://max.ru/chat/id470516340503_4_bot',
+};
+
+function nextScreen() {
+  // Last screen — redirect to messenger bot
+  if (cur === TOTAL - 1) {
+    try {
+      const auth = JSON.parse(localStorage.getItem('partner_auth') || '{}');
+      const provider = auth.provider || 'telegram';
+      const link = BOT_LINKS[provider] || BOT_LINKS.telegram;
+      window.location.href = link;
+    } catch(e) {
+      window.location.href = BOT_LINKS.telegram;
+    }
+    return;
+  }
+  if (cur < TOTAL - 1) goTo(cur + 1);
+}
 function prevScreen() { if (cur > 0) goTo(cur - 1); }
 
 // ── Auth via messengers ──────────────────────────────────────────
